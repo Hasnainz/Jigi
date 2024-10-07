@@ -4,46 +4,50 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFromBaseline
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.jigi.ui.theme.JigiTheme
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.materialIcon
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.ExposedDropdownMenuDefaults.textFieldColors
+import androidx.compose.material.icons.rounded.Clear
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.res.colorResource
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.semantics.Role.Companion.Button
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 
@@ -64,6 +68,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainPage(modifier: Modifier = Modifier) {
     var query by remember { mutableStateOf("") }
+    val lines = remember {
+        mutableStateListOf<Line>()
+    }
+
     Column (
         modifier = Modifier.fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -81,9 +89,7 @@ fun MainPage(modifier: Modifier = Modifier) {
                 value = query,
                 onValueChange = { query = it },
 
-                modifier = Modifier
-//                    .clip(RoundedCornerShape(12.dp,0.dp, 0.dp, 12.dp))
-                    .fillMaxHeight(),
+                modifier = Modifier.fillMaxHeight(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 singleLine = true,
                 colors = TextFieldDefaults.colors(
@@ -100,27 +106,90 @@ fun MainPage(modifier: Modifier = Modifier) {
                 onClick = {},
                 modifier = Modifier
                     .background(color = colorResource(id = R.color.secondary1))
-//                    .clip(RoundedCornerShape(12.dp,12.dp, 12.dp, 12.dp))
                     .fillMaxHeight()
 
             ) {
-                Icon(Icons.Outlined.Search,
+                Icon(Icons.Rounded.Search,
                     tint = colorResource(id = R.color.light1),
                     contentDescription = "Search Button")
             }
         }
-        Row(){
-            IconButton(
-                onClick = {},
-            ) {
-                Icon(Icons.Outlined.Search,
-                    tint = colorResource(id = R.color.light1),
-                    contentDescription = "Search Button")
+
+        Row(
+            modifier = Modifier
+                .height(400.dp)
+                .padding(top = 40.dp, start = 40.dp, end = 40.dp)
+                .clip(RoundedCornerShape(20.dp))
+        ){
+            Canvas(
+                modifier = Modifier
+                    .background(color = colorResource(id = R.color.secondary1))
+                    .fillMaxSize()
+                    .pointerInput(true) {
+                        detectDragGestures { change, dragAmount ->
+                            change.consume()
+                            val line = Line(
+                                start = change.position - dragAmount,
+                                end = change.position
+                            )
+                            lines.add(line)
+                        }
+                    }
+            )
+            {
+                lines.forEach{ line ->
+                    drawLine(
+                        color = Color(0xFFFFF4E9),
+                        start = line.start,
+                        end = line.end,
+                        strokeWidth = line.strokeWidth.toPx(),
+                        cap = StrokeCap.Round,
+                    )
+                }
             }
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier
+            .height(intrinsicSize = IntrinsicSize.Min)
+            .padding(top = 12.dp, end = 40.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .fillMaxWidth()
+        ){
+            FloatingActionButton(
+                onClick = { },
+                containerColor = colorResource(id = R.color.secondary1),
+                contentColor = colorResource(id = R.color.light1),
+                modifier = Modifier
+                    .padding(end = 12.dp),
+
+
+            ) {
+                Icon(painterResource(id = R.drawable.undo), "Undo button.")
+            }
+
+            FloatingActionButton(
+                onClick = { },
+                containerColor = colorResource(id = R.color.secondary1),
+                contentColor = colorResource(id = R.color.light1),
+                modifier = Modifier
+
+            ) {
+                Icon(Icons.Rounded.Clear, "Clear button.")
+            }
+
+
         }
     }
 
 }
+data class Line(
+    val start: Offset,
+    val end: Offset,
+    val color: Color = Color.Black,
+    val strokeWidth: androidx.compose.ui.unit.Dp = 4.dp
+)
 
 @Preview(showBackground = true)
 @Composable
