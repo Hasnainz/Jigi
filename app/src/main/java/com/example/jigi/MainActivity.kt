@@ -17,7 +17,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.TextField
@@ -31,9 +34,13 @@ import androidx.compose.material.icons.materialIcon
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.res.colorResource
 import androidx.compose.runtime.mutableStateOf
@@ -48,8 +55,10 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 
 class MainActivity : ComponentActivity() {
@@ -150,33 +159,106 @@ fun MainPage(modifier: Modifier = Modifier) {
         }
 
         Row(
-            horizontalArrangement = Arrangement.End,
+            horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
             .height(intrinsicSize = IntrinsicSize.Min)
-            .padding(top = 12.dp, end = 40.dp)
+            .padding(top = 12.dp, start = 40.dp, end = 40.dp)
             .clip(RoundedCornerShape(12.dp))
             .fillMaxWidth()
         ){
+
             FloatingActionButton(
-                onClick = { },
+                onClick = {
+                    if(lines.lastIndex >= 0) {
+                        lines.removeAt(lines.lastIndex)
+                    } },
                 containerColor = colorResource(id = R.color.secondary1),
                 contentColor = colorResource(id = R.color.light1),
                 modifier = Modifier
-                    .padding(end = 12.dp),
-
-
-            ) {
+                ) {
                 Icon(painterResource(id = R.drawable.undo), "Undo button.")
             }
 
             FloatingActionButton(
-                onClick = { },
+                onClick = { lines.clear() },
                 containerColor = colorResource(id = R.color.secondary1),
                 contentColor = colorResource(id = R.color.light1),
                 modifier = Modifier
 
             ) {
                 Icon(Icons.Rounded.Clear, "Clear button.")
+            }
+
+
+        }
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .height(intrinsicSize = IntrinsicSize.Min)
+                .padding(top = 12.dp, start = 40.dp, end = 40.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .fillMaxWidth()
+        ){
+
+            TextButton (
+                onClick = {  },
+                modifier = Modifier
+            ) {
+                Text("金", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+            }
+            TextButton(
+                onClick = {  },
+                modifier = Modifier
+            ) {
+                Text("育", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+            }
+
+            TextButton(
+                onClick = {  },
+                modifier = Modifier
+            ) {
+                Text("実", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+            }
+            TextButton (
+                onClick = {  },
+                modifier = Modifier
+            ) {
+                Text("鬱", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+            }
+            TextButton(
+                onClick = {  },
+                modifier = Modifier
+            ) {
+                Text("匂", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+            }
+        }
+        Row(
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier
+                .height(intrinsicSize = IntrinsicSize.Min)
+                .padding(top = 12.dp, start = 40.dp, end = 40.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .fillMaxWidth()
+        ){
+
+            FloatingActionButton(
+                onClick = { },
+                containerColor = colorResource(id = R.color.secondary1),
+                contentColor = colorResource(id = R.color.light1),
+                modifier = Modifier
+                    .padding(end = 4.dp)
+            ) {
+                Icon(painterResource(id = R.drawable.upload2), "Import Dictionary Button.")
+            }
+
+            FloatingActionButton(
+                onClick = {  },
+                containerColor = colorResource(id = R.color.secondary1),
+                contentColor = colorResource(id = R.color.light1),
+                modifier = Modifier
+
+            ) {
+                Icon(Icons.Rounded.Settings, "Settings Button.")
             }
 
 
@@ -188,7 +270,7 @@ data class Line(
     val start: Offset,
     val end: Offset,
     val color: Color = Color.Black,
-    val strokeWidth: androidx.compose.ui.unit.Dp = 4.dp
+    val strokeWidth: androidx.compose.ui.unit.Dp = 6.dp
 )
 
 @Preview(showBackground = true)
