@@ -16,4 +16,9 @@
     <color name="light1">#FFF4E9</color>
 
 
+    <color name="backgroundLight">#FFFFF7F9</color>
+    <color name="onBackgroundLight">#FF201A1E</color>
+    <color name="backgroundDark">#FF171216</color>
+    <color name="onBackgroundDark">#FFEBDFE6</color>
+
 </resources>
