@@ -1,4 +1,4 @@
-package com.example.jigi
+package com.example.jigi.data
 
 import kotlinx.coroutines.flow.Flow
 

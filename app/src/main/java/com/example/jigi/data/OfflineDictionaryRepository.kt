@@ -1,8 +1,9 @@
-package com.example.jigi
+package com.example.jigi.data
 
 import kotlinx.coroutines.flow.Flow
 
-class OfflineDictionaryRepository(private val dictEntryDAO: DictionaryEntryDAO) : DictionaryRepository {
+class OfflineDictionaryRepository(private val dictEntryDAO: DictionaryEntryDAO) :
+    DictionaryRepository {
     override suspend fun insert(entry: DictionaryEntry) = dictEntryDAO.insert(entry)
 
     override suspend fun update(entry: DictionaryEntry) = dictEntryDAO.update(entry)

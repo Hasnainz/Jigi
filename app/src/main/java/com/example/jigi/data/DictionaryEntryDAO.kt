@@ -1,8 +1,7 @@
-package com.example.jigi
+package com.example.jigi.data
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Ignore
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query

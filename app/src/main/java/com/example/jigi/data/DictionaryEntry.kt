@@ -1,4 +1,4 @@
-package com.example.jigi
+package com.example.jigi.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

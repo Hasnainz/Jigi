@@ -1,4 +1,4 @@
-package com.example.jigi
+package com.example.jigi.data
 
 import android.content.Context
 

@@ -1,10 +1,10 @@
-package com.example.jigi
+package com.example.jigi.ui.searchPage
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -41,28 +42,24 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.NavHost
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.jigi.R
 import com.example.jigi.ui.theme.onBackgroundDark
 import com.example.jigi.ui.theme.onPrimaryContainerDark
 import com.example.jigi.ui.theme.onPrimaryContainerLight
@@ -74,23 +71,18 @@ import com.example.jigi.ui.theme.secondaryContainerLight
 import com.example.jigi.ui.theme.tertiaryContainerLight
 
 
-
 enum class SearchScreen() {
 
 }
 
 @Composable
-fun SearchPage(modifier: Modifier = Modifier) {
-    val lines = remember { mutableStateListOf<Line>() }
-    val linesSize = remember { mutableStateListOf<Int>() }
-    val query = remember { mutableStateOf(
-        TextFieldValue(
-            text = "",
-            selection = TextRange(0)
-        )
-    ) }
-    var conjugation by remember { mutableStateOf(false) }
-    val kanji = remember { mutableStateListOf("巨", "手", "描", "ホ", "言", "語", "爆", "笑", "間", "週","巨", "手", "描", "ホ", "言", "語", "爆", "笑", "間", "週","巨", "手", "描", "ホ", "言", "語", "爆", "笑", "間", "週","巨", "手", "描", "ホ", "言", "語", "爆", "笑", "間", "週") }
+fun SearchPage(
+    searchPageViewModel: SearchPageViewModel = viewModel(),
+    modifier: Modifier = Modifier
+) {
+
+    val searchPageUiState by searchPageViewModel.uiState.collectAsState()
+
 
     Column(
         modifier.padding(start = 20.dp, end = 20.dp)
@@ -100,9 +92,16 @@ fun SearchPage(modifier: Modifier = Modifier) {
             modifier
                 .padding(top = 40.dp, bottom = 16.dp)
                 .height(400.dp),
-            lines,
-            linesSize)
-        SearchBar(modifier.padding(), query)
+            lines = searchPageViewModel.lines,
+            addLineSize = { searchPageViewModel.addLineSize() },
+            addLine = { searchPageViewModel.addLine(it) }
+        )
+        SearchBar(
+            query = searchPageViewModel.query,
+            onQueryChange = { searchPageViewModel.onQueryChanged(it) },
+            clearQuery = { searchPageViewModel.clearQuery() },
+            modifier = modifier.padding()
+        )
 
         Row()
         {
@@ -111,24 +110,18 @@ fun SearchPage(modifier: Modifier = Modifier) {
                     .weight(3f)
                     .fillMaxHeight()
                     .padding(top = 8.dp, bottom = 60.dp),
-                kanji = kanji,
-                query = query
+                kanji = searchPageViewModel.kanjiList,
+                addKanjiToQuery = { searchPageViewModel.addKanjiToQuery(it) },
             )
-            ExtraButtonsGrid(modifier = Modifier
-                .weight(2f)
-                .padding(top = 16.dp),
-                onUndoClicked = {
-                    if(linesSize.size >= 2){
-                        val a = linesSize.elementAt(linesSize.lastIndex - 1)
-                        val b = linesSize.elementAt(linesSize.lastIndex)
-                        Log.d("Lines size ranges", "a=$a, b=$b")
-                        lines.removeRange(linesSize.elementAt(linesSize.lastIndex-1), linesSize.elementAt(linesSize.lastIndex))
-                        linesSize.removeRange(linesSize.lastIndex - 1, linesSize.lastIndex + 1);
-                    } },
-                onCanvasClear = { lines.clear()
-                    linesSize.clear() },
-                toggleConjugation = { conjugation = !conjugation },
-                conjugate = conjugation,
+            ExtraButtonsGrid(
+                modifier = Modifier
+                    .weight(2f)
+                    .padding(top = 16.dp),
+                onUndoClicked = { searchPageViewModel.canvasUndo() },
+                onCanvasClear = { searchPageViewModel.canvasClear() },
+                searchOptions = searchPageViewModel.searchOptions,
+                selectedSearchOption = searchPageUiState.selectedSearchOption,
+                selectSearchOption = { searchPageViewModel.selectSearchOption(it) },
             )
         }
 
@@ -136,7 +129,12 @@ fun SearchPage(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun HandwritingPad(modifier: Modifier = Modifier, lines: SnapshotStateList<Line> = mutableStateListOf(), linesSize: SnapshotStateList<Int> = mutableStateListOf()) {
+fun HandwritingPad(
+    modifier: Modifier = Modifier,
+    lines: List<Line> = emptyList(),
+    addLineSize: () -> Unit,
+    addLine: (Line) -> Unit
+) {
     Canvas(
         modifier = modifier
             .clip(RoundedCornerShape(20.dp))
@@ -144,29 +142,19 @@ fun HandwritingPad(modifier: Modifier = Modifier, lines: SnapshotStateList<Line>
             .fillMaxSize()
             .pointerInput(Unit) {
                 detectDragGestures(
-                    onDragStart = { linesSize.add(lines.size) },
-                    onDragEnd = { linesSize.add(lines.size) },
-                    onDragCancel = { linesSize.add(lines.size) },
+                    onDragStart = { addLineSize() },
+                    onDragEnd = { addLineSize() },
+                    onDragCancel = { addLineSize() },
                     onDrag = { change, dragAmount ->
                         change.consume()
                         val line = Line(
                             start = change.position - dragAmount,
                             end = change.position
                         )
-                        lines.add(line)
+                        addLine(line)
                     }
                 )
             }
-//            .pointerInput(Unit) {
-//                detectDragGestures  { change, dragAmount ->
-//                    change.consume()
-//                    val line = Line(
-//                        start = change.position - dragAmount,
-//                        end = change.position
-//                    )
-//                    lines.add(line)
-//                }
-//            }
     )
     {
         lines.forEach { line ->
@@ -181,14 +169,6 @@ fun HandwritingPad(modifier: Modifier = Modifier, lines: SnapshotStateList<Line>
     }
 }
 
-data class Line(
-    val start: Offset,
-    val end: Offset,
-    val color: Color = onPrimaryContainerLight,
-    val strokeWidth: Dp = 6.dp
-)
-
-
 @Composable
 fun AboutIcon(modifier: Modifier = Modifier) {
     SmallFloatingActionButton(
@@ -202,17 +182,19 @@ fun AboutIcon(modifier: Modifier = Modifier) {
 }
 
 
-
 @Composable
-fun KanjiGrid(modifier: Modifier = Modifier, kanji: List<String>, query: MutableState<TextFieldValue>) {
+fun KanjiGrid(
+    modifier: Modifier = Modifier,
+    kanji: List<String>,
+    addKanjiToQuery: (String) -> Unit
+) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        items(items = kanji) { k ->
-            val mutatedQuery = StringBuilder(query.value.text).insert(query.value.selection.start, k).toString()
-            Kanji(kanji = k, onKanjiSelect = { query.value = TextFieldValue(text = mutatedQuery, selection = TextRange(query.value.selection.start + 1)) })
+        items(items = kanji) {
+            Kanji(kanji = it, onKanjiSelect = { addKanjiToQuery(it) })
         }
     }
 }
@@ -233,14 +215,26 @@ fun Kanji(modifier: Modifier = Modifier, kanji: String, onKanjiSelect: () -> Uni
 }
 
 @Composable
-fun ExtraButtonsGrid(modifier: Modifier = Modifier, onUndoClicked: () -> Unit, onCanvasClear: () -> Unit, toggleConjugation: () -> Unit, conjugate: Boolean) {
+fun ExtraButtonsGrid(
+    modifier: Modifier = Modifier,
+    searchOptions: List<SearchOption> = SearchOption.entries,
+    selectedSearchOption: SearchOption,
+    selectSearchOption: (SearchOption) -> Unit,
+    onUndoClicked: () -> Unit,
+    onCanvasClear: () -> Unit,
+) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.End,
         verticalArrangement = Arrangement.SpaceEvenly
     )
     {
-        SearchParametersDropDown(Modifier.padding(bottom = 8.dp))
+        SearchParametersDropDown(
+            searchOptions = searchOptions,
+            selectedSearchOption = selectedSearchOption,
+            selectSearchOption = selectSearchOption,
+            modifier = Modifier.padding(bottom = 8.dp),
+        )
         Row(
             modifier = Modifier.padding(bottom = 8.dp)
         ) {
@@ -248,7 +242,7 @@ fun ExtraButtonsGrid(modifier: Modifier = Modifier, onUndoClicked: () -> Unit, o
             SettingsButton(Modifier.padding())
         }
 
-        Row() {
+        Row {
             UndoCanvasButton(Modifier.padding(end = 8.dp), onUndoClicked = onUndoClicked)
             ClearCanvasButton(onCanvasClear = onCanvasClear)
         }
@@ -256,13 +250,16 @@ fun ExtraButtonsGrid(modifier: Modifier = Modifier, onUndoClicked: () -> Unit, o
     }
 
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchParametersDropDown(modifier: Modifier = Modifier) {
-    val options = listOf("Contains", "Exact", "Forwards")
+fun SearchParametersDropDown(
+    selectedSearchOption: SearchOption,
+    searchOptions: List<SearchOption> = SearchOption.entries,
+    selectSearchOption: (SearchOption) -> Unit,
+    modifier: Modifier = Modifier
+) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedOptionText by remember { mutableStateOf(options[0]) }
-
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
@@ -275,26 +272,25 @@ fun SearchParametersDropDown(modifier: Modifier = Modifier) {
                 .padding(start = 8.dp)
                 .clip(RoundedCornerShape(20.dp)),
             readOnly = true,
-            value = selectedOptionText,
+            value = selectedSearchOption.name,
             onValueChange = {},
             trailingIcon = {
-                if (expanded)
-                {
+                if (expanded) {
                     Icon(
                         Icons.Rounded.ExpandLess,
                         contentDescription = "Expand Less",
                         tint = onPrimaryContainerLight,
                         modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp)))
-                }
-                else
-                {
+                            .clip(RoundedCornerShape(20.dp))
+                    )
+                } else {
                     Icon(
                         Icons.Rounded.ExpandMore,
                         contentDescription = "Expand More",
                         tint = onPrimaryContainerLight,
                         modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp)))
+                            .clip(RoundedCornerShape(20.dp))
+                    )
                 }
 
             },
@@ -317,11 +313,11 @@ fun SearchParametersDropDown(modifier: Modifier = Modifier) {
                 .background(secondaryContainerLight)
                 .padding(start = 8.dp)
         ) {
-            options.forEach { selectionOption ->
+            searchOptions.forEach { selectionOption ->
                 DropdownMenuItem(
-                    text = { Text(selectionOption, color = onSecondaryContainerLight) },
+                    text = { Text(selectionOption.name, color = onSecondaryContainerLight) },
                     onClick = {
-                        selectedOptionText = selectionOption
+                        selectSearchOption(selectionOption)
                         expanded = false
                     },
                 )
@@ -355,7 +351,11 @@ fun ClearCanvasButton(modifier: Modifier = Modifier, onCanvasClear: () -> Unit) 
 }
 
 @Composable
-fun ToggleConjugationButton(modifier: Modifier = Modifier, toggleConjugation: () -> Unit, conjugate: Boolean) {
+fun ToggleConjugationButton(
+    modifier: Modifier = Modifier,
+    toggleConjugation: () -> Unit,
+    conjugate: Boolean
+) {
     FloatingActionButton(
         onClick = toggleConjugation,
         containerColor = primaryContainerLight,
@@ -363,14 +363,17 @@ fun ToggleConjugationButton(modifier: Modifier = Modifier, toggleConjugation: ()
         modifier = modifier
     ) {
 
-        Icon(if (conjugate) Icons.Rounded.Shuffle else Icons.Rounded.CheckBoxOutlineBlank, "Import Dictionary Button.")
+        Icon(
+            if (conjugate) Icons.Rounded.Shuffle else Icons.Rounded.CheckBoxOutlineBlank,
+            "Import Dictionary Button."
+        )
     }
 }
 
 @Composable
 fun SearchHistoryButton(modifier: Modifier = Modifier) {
     FloatingActionButton(
-        onClick = {  },
+        onClick = { },
         containerColor = secondaryContainerLight,
         contentColor = onSecondaryContainerLight,
         modifier = modifier
@@ -404,10 +407,13 @@ fun SettingsButton(modifier: Modifier = Modifier) {
 }
 
 
-
-
 @Composable
-fun SearchBar(modifier: Modifier = Modifier, query: MutableState<TextFieldValue>) {
+fun SearchBar(
+    modifier: Modifier = Modifier,
+    query: TextFieldValue,
+    onQueryChange: (TextFieldValue) -> Unit,
+    clearQuery: () -> Unit
+) {
     Row(
         modifier = modifier
             .height(intrinsicSize = IntrinsicSize.Min)
@@ -415,16 +421,21 @@ fun SearchBar(modifier: Modifier = Modifier, query: MutableState<TextFieldValue>
 
     ) {
         TextField(
-            value = query.value,
-            onValueChange = { query.value = it },
-            modifier = Modifier.fillMaxHeight(),
+            value = query,
+            onValueChange = onQueryChange,
+            modifier = Modifier
+                .fillMaxHeight()
+                .horizontalScroll(rememberScrollState()),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             singleLine = true,
             trailingIcon = {
                 Icon(
-                    Icons.Rounded.Clear, contentDescription = "Clear Query", tint = onPrimaryContainerDark, modifier = Modifier
-                    .clip(RoundedCornerShape(20.dp))
-                    .clickable { query.value = TextFieldValue() })
+                    Icons.Rounded.Clear,
+                    contentDescription = "Clear Query",
+                    tint = onPrimaryContainerDark,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(20.dp))
+                        .clickable { clearQuery() })
             },
 
 
