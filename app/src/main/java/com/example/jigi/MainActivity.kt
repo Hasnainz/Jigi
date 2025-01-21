@@ -19,25 +19,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppTheme() {
-                SearchPage()
-//                SearchResultPage()
+                JigiApp()
             }
 
         }
     }
 }
 
-
-
-@Composable
-fun SearchResultPage(modifier: Modifier = Modifier) {
-    Column (modifier = modifier)
-    {
-        Text("Word")
-        Text("Definition")
-    }
-
-}
 
 
 //TODO :: Search page with dictionary

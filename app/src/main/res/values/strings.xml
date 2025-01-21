@@ -1,8 +1,13 @@
 <resources>
     <string name="app_name">Jigi</string>
+    <string name="about_page">About</string>
+    <string name="dictionary_results_page">Results</string>
+    <string name="search_page">Search</string>
+    <string name="history_page">History</string>
+    <string name="settings_page">Settings</string>
     <string name="show_less">Show less</string>
     <string name="show_more">Show more</string>
-
+    <string name="back_button">Back Button</string>
 
 
 

@@ -1,5 +1,6 @@
 package com.example.jigi.ui.searchPage
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +21,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.CheckBoxOutlineBlank
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.ExpandLess
@@ -41,6 +44,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -50,16 +55,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHost
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.jigi.R
+import com.example.jigi.SearchScreen
 import com.example.jigi.ui.theme.onBackgroundDark
 import com.example.jigi.ui.theme.onPrimaryContainerDark
 import com.example.jigi.ui.theme.onPrimaryContainerLight
@@ -71,15 +83,15 @@ import com.example.jigi.ui.theme.secondaryContainerLight
 import com.example.jigi.ui.theme.tertiaryContainerLight
 
 
-enum class SearchScreen() {
-
-}
 
 @Composable
 fun SearchPage(
     searchPageViewModel: SearchPageViewModel = viewModel(),
+    onSearchButtonClicked: (String) -> Unit,
+    updateDictionaryState: (SearchOption) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
 
     val searchPageUiState by searchPageViewModel.uiState.collectAsState()
 
@@ -90,8 +102,8 @@ fun SearchPage(
     {
         HandwritingPad(
             modifier
-                .padding(top = 40.dp, bottom = 16.dp)
-                .height(400.dp),
+                .padding(top = 20.dp, bottom = 16.dp)
+                .fillMaxHeight(0.5f),
             lines = searchPageViewModel.lines,
             addLineSize = { searchPageViewModel.addLineSize() },
             addLine = { searchPageViewModel.addLine(it) }
@@ -100,6 +112,7 @@ fun SearchPage(
             query = searchPageViewModel.query,
             onQueryChange = { searchPageViewModel.onQueryChanged(it) },
             clearQuery = { searchPageViewModel.clearQuery() },
+            onSearchButtonClicked = onSearchButtonClicked,
             modifier = modifier.padding()
         )
 
@@ -122,6 +135,7 @@ fun SearchPage(
                 searchOptions = searchPageViewModel.searchOptions,
                 selectedSearchOption = searchPageUiState.selectedSearchOption,
                 selectSearchOption = { searchPageViewModel.selectSearchOption(it) },
+                updateDictionaryState = updateDictionaryState,
             )
         }
 
@@ -222,6 +236,7 @@ fun ExtraButtonsGrid(
     selectSearchOption: (SearchOption) -> Unit,
     onUndoClicked: () -> Unit,
     onCanvasClear: () -> Unit,
+    updateDictionaryState: (SearchOption) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -233,6 +248,7 @@ fun ExtraButtonsGrid(
             searchOptions = searchOptions,
             selectedSearchOption = selectedSearchOption,
             selectSearchOption = selectSearchOption,
+            updateDictionaryState = updateDictionaryState,
             modifier = Modifier.padding(bottom = 8.dp),
         )
         Row(
@@ -257,6 +273,7 @@ fun SearchParametersDropDown(
     selectedSearchOption: SearchOption,
     searchOptions: List<SearchOption> = SearchOption.entries,
     selectSearchOption: (SearchOption) -> Unit,
+    updateDictionaryState: (SearchOption) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -318,6 +335,7 @@ fun SearchParametersDropDown(
                     text = { Text(selectionOption.name, color = onSecondaryContainerLight) },
                     onClick = {
                         selectSearchOption(selectionOption)
+                        updateDictionaryState(selectionOption)
                         expanded = false
                     },
                 )
@@ -412,6 +430,7 @@ fun SearchBar(
     modifier: Modifier = Modifier,
     query: TextFieldValue,
     onQueryChange: (TextFieldValue) -> Unit,
+    onSearchButtonClicked: (String) -> Unit,
     clearQuery: () -> Unit
 ) {
     Row(
@@ -452,7 +471,7 @@ fun SearchBar(
             shape = RectangleShape
         )
         IconButton(
-            onClick = {},
+            onClick = { onSearchButtonClicked(query.text) },
             modifier = Modifier
                 .background(color = primaryContainerLight)
                 .fillMaxHeight()
