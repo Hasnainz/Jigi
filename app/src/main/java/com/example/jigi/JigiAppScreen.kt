@@ -83,7 +83,7 @@ enum class SearchScreen(@StringRes val title: Int) {
 @Composable
 fun JigiApp(
     searchPageViewModel: SearchPageViewModel = viewModel(),
-    dictionaryResultsViewModel: DictionaryResultsViewModel = viewModel(),
+    dictionaryResultsViewModel: DictionaryResultsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navController: NavHostController = rememberNavController()
 ) {
 
@@ -99,7 +99,6 @@ fun JigiApp(
             )
         }
     ) { innerPadding ->
-        val dictionaryResultsUiState by dictionaryResultsViewModel.uiState.collectAsState()
         NavHost(
             navController = navController,
             startDestination = SearchScreen.Search.name,
@@ -108,15 +107,14 @@ fun JigiApp(
             composable(route = SearchScreen.Search.name) {
                 SearchPage(
                     searchPageViewModel = searchPageViewModel,
-                    updateDictionaryState = { dictionaryResultsViewModel.setSearchOption(it) },
-                    onSearchButtonClicked = {
-                        dictionaryResultsViewModel.setSearchQuery(query = it)
+                    navigateToSearch = {
                         navController.navigate(SearchScreen.DictionaryResults.name)
-                    }
+                    },
                 )
             }
             composable(route = SearchScreen.DictionaryResults.name) {
                 DictionaryResultsPage(
+                    searchPageViewModel = searchPageViewModel,
                     dictionaryResultsViewModel = dictionaryResultsViewModel
                 )
             }

@@ -10,12 +10,12 @@ class OfflineDictionaryRepository(private val dictEntryDAO: DictionaryEntryDAO) 
 
     override suspend fun delete(entry: DictionaryEntry) = dictEntryDAO.delete(entry)
 
-    override fun getExactWord(word: String): Flow<DictionaryEntry> = dictEntryDAO.getExactWord(word)
+    override fun getExactWord(word: String): Flow<List<DictionaryEntry>> = dictEntryDAO.getExactWord(word)
 
-    override fun getContainsWord(word: String): Flow<DictionaryEntry> = dictEntryDAO.getContainsWord(word)
+    override fun getContainsWord(word: String): Flow<List<DictionaryEntry>> = dictEntryDAO.getContainsWord(word)
 
-    override fun getForwardsWord(word: String): Flow<DictionaryEntry> = dictEntryDAO.getForwardsWord(word)
+    override fun getForwardsWord(word: String): Flow<List<DictionaryEntry>> = dictEntryDAO.getForwardsWord(word)
 
-    override fun getBackwardsWord(word: String): Flow<DictionaryEntry> = dictEntryDAO.getBackwardsWord(word)
+    override fun getBackwardsWord(word: String): Flow<List<DictionaryEntry>> = dictEntryDAO.getBackwardsWord(word)
 
 }

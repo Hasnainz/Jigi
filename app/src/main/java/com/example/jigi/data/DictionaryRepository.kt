@@ -9,12 +9,12 @@ interface DictionaryRepository {
 
     suspend fun delete(entry: DictionaryEntry)
 
-    fun getExactWord(word: String): Flow<DictionaryEntry>
+    fun getExactWord(word: String): Flow<List<DictionaryEntry>>
 
-    fun getContainsWord(word: String): Flow<DictionaryEntry>
+    fun getContainsWord(word: String): Flow<List<DictionaryEntry>>
 
-    fun getForwardsWord(word: String): Flow<DictionaryEntry>
+    fun getForwardsWord(word: String): Flow<List<DictionaryEntry>>
 
-    fun getBackwardsWord(word: String): Flow<DictionaryEntry>
+    fun getBackwardsWord(word: String): Flow<List<DictionaryEntry>>
 
 }

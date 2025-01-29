@@ -35,9 +35,17 @@ class SearchPageViewModel : ViewModel() {
         "週"
     )
 
-    fun selectSearchOption(searchOption: SearchOption) {
+    fun setSearchOption(searchOption: SearchOption) {
         _uiState.update { currentState ->
             currentState.copy(selectedSearchOption = searchOption)
+        }
+    }
+
+    fun setSearchQuery(query: String) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                query = query,
+            )
         }
     }
 
@@ -53,6 +61,8 @@ class SearchPageViewModel : ViewModel() {
             linesSize.removeRange(linesSize.lastIndex - 1, linesSize.lastIndex + 1);
         }
     }
+
+
 
     fun canvasClear() {
         lines.clear()

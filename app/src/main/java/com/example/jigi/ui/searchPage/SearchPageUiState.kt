@@ -22,4 +22,5 @@ enum class SearchOption{
 
 data class SearchPageUiState(
     val selectedSearchOption: SearchOption = SearchOption.Contains,
+    val query: String = "",
 )

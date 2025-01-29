@@ -3,6 +3,10 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("com.google.devtools.ksp") version "2.1.0-1.0.29"
     alias(libs.plugins.compose.compiler)
+//    kotlin("jvm") version "2.1.0"
+    kotlin("plugin.serialization") version "2.1.10"
+
+
 }
 
 android {
@@ -52,6 +56,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.kotlinx.serialization.json)
+
     implementation("androidx.compose.material:material-icons-extended")
 
     //Room

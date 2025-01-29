@@ -1,5 +1,6 @@
 package com.example.jigi.ui.dictionaryResultsPage
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -22,18 +23,36 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
+import com.example.jigi.AppViewModelProvider
 import com.example.jigi.R
+import com.example.jigi.ui.searchPage.SearchPageViewModel
 import com.example.jigi.ui.theme.onPrimaryContainerDark
 import com.example.jigi.ui.theme.primaryContainerDark
+import kotlinx.coroutines.launch
 
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun DictionaryResultsPage(
-    dictionaryResultsViewModel: DictionaryResultsViewModel = viewModel(),
+    searchPageViewModel: SearchPageViewModel = viewModel(),
+    dictionaryResultsViewModel: DictionaryResultsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ) {
-    val uiState = dictionaryResultsViewModel.uiState.collectAsState()
-    Text("Query: \"${uiState.value.query}\", Option: ${uiState.value.selectedSearchOption}")
+    val searchPageState = searchPageViewModel.uiState.collectAsState()
+
+
+    val coroutineScope = rememberCoroutineScope()
+    coroutineScope.launch {
+        dictionaryResultsViewModel.search(searchPageState.value.query, searchPageState.value.selectedSearchOption)
+    }
+
+    val queryResult = dictionaryResultsViewModel.dictionaryUiState.resultList
+    Column {
+        Text("Query: \"${searchPageState.value.query}\", Option: ${searchPageState.value.selectedSearchOption}")
+        Text("$queryResult")
+    }
+
 }

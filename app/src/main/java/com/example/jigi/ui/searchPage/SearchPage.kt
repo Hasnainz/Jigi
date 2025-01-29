@@ -70,8 +70,10 @@ import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.jigi.AppViewModelProvider
 import com.example.jigi.R
 import com.example.jigi.SearchScreen
+import com.example.jigi.ui.dictionaryResultsPage.DictionaryResultsViewModel
 import com.example.jigi.ui.theme.onBackgroundDark
 import com.example.jigi.ui.theme.onPrimaryContainerDark
 import com.example.jigi.ui.theme.onPrimaryContainerLight
@@ -87,8 +89,7 @@ import com.example.jigi.ui.theme.tertiaryContainerLight
 @Composable
 fun SearchPage(
     searchPageViewModel: SearchPageViewModel = viewModel(),
-    onSearchButtonClicked: (String) -> Unit,
-    updateDictionaryState: (SearchOption) -> Unit,
+    navigateToSearch: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -112,7 +113,10 @@ fun SearchPage(
             query = searchPageViewModel.query,
             onQueryChange = { searchPageViewModel.onQueryChanged(it) },
             clearQuery = { searchPageViewModel.clearQuery() },
-            onSearchButtonClicked = onSearchButtonClicked,
+            onSearchButtonClicked = {
+                searchPageViewModel.setSearchQuery(query = it)
+                navigateToSearch()
+            },
             modifier = modifier.padding()
         )
 
@@ -134,8 +138,10 @@ fun SearchPage(
                 onCanvasClear = { searchPageViewModel.canvasClear() },
                 searchOptions = searchPageViewModel.searchOptions,
                 selectedSearchOption = searchPageUiState.selectedSearchOption,
-                selectSearchOption = { searchPageViewModel.selectSearchOption(it) },
-                updateDictionaryState = updateDictionaryState,
+                selectSearchOption = { searchPageViewModel.setSearchOption(it) },
+                updateDictionaryState = {
+                    searchPageViewModel.setSearchOption(it)
+                },
             )
         }
 
