@@ -58,7 +58,8 @@ android {
 dependencies {
     implementation(libs.kotlinx.serialization.json)
 
-    implementation("androidx.compose.material:material-icons-extended")
+    implementation(libs.androidx.material.icons.extended)
+
 
     //Room
     implementation(libs.androidx.room.runtime)

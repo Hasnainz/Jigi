@@ -1,4 +1,4 @@
-package com.example.jigi
+package com.example.jigi.viewprovider
 
 import android.app.Application
 import com.example.jigi.data.AppContainer

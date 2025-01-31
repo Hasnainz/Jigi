@@ -10,6 +10,8 @@ class OfflineDictionaryRepository(private val dictEntryDAO: DictionaryEntryDAO) 
 
     override suspend fun delete(entry: DictionaryEntry) = dictEntryDAO.delete(entry)
 
+    override suspend fun nukeTable() = dictEntryDAO.nukeTable()
+
     override fun getExactWord(word: String): Flow<List<DictionaryEntry>> = dictEntryDAO.getExactWord(word)
 
     override fun getContainsWord(word: String): Flow<List<DictionaryEntry>> = dictEntryDAO.getContainsWord(word)

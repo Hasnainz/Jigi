@@ -1,5 +1,6 @@
 package com.example.jigi.ui.dictionaryResultsPage
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -29,13 +30,20 @@ class DictionaryResultsViewModel(private val dictionaryRepository: DictionaryRep
             private set
 
 
-        suspend fun search(query: String, option: SearchOption) {
-            viewModelScope.launch {
-                dictionaryUiState = DictionaryResultsUiState(dictionaryRepository.getContainsWord(query)
-                    .filterNotNull()
-                    .first())
+        fun search(query: String, option: SearchOption) {
+            if (query == "") {
+                return
             }
-
+            viewModelScope.launch {
+                val queryResult = dictionaryRepository.getContainsWord(query)
+                    .filterNotNull()
+                    .first()
+                dictionaryUiState = when(option) {
+                    SearchOption.Contains -> DictionaryResultsUiState(queryResult)
+                    SearchOption.Exact -> DictionaryResultsUiState(queryResult)
+                    SearchOption.Forwards -> DictionaryResultsUiState(queryResult)
+                }
+            }
         }
 
 

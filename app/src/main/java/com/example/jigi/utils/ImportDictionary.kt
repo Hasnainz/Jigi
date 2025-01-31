@@ -1,14 +1,26 @@
 package com.example.jigi.utils
 
 
-
 import java.util.zip.ZipFile
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import java.io.File
 import java.nio.charset.Charset
+import java.util.zip.ZipEntry
 
 class ImportDictionary {
+
+    class ZipFilesWithMetaData(
+        val name: String,
+        val mimeType: String,
+        val zipEntries: MutableList<ZipEntryWithByteData>
+    )
+
+    class ZipEntryWithByteData(
+        val zipEntry: ZipEntry,
+        val bytes: ByteArray
+    )
+
 
     data class Dictionary(
         var entries: MutableList<DictionaryEntry> = mutableListOf(),
@@ -36,7 +48,9 @@ class ImportDictionary {
     )
 
 
-    fun getDictionaries(): List<Dictionary> {
+
+
+    private fun getDictionaries(): List<Dictionary> {
         val pathnames: List<String> = listOf(
             "./src/main/resources/dictionaries/新明解国語辞典第五版v3.zip",
             "./src/main/resources/dictionaries/明鏡国語辞典.zip"
@@ -48,6 +62,18 @@ class ImportDictionary {
         return dictionaries
     }
 
+    fun loadDictionary(files: ZipFilesWithMetaData): Dictionary {
+        val dictionary = Dictionary()
+        for (file in files.zipEntries) {
+            val inputString = file.bytes.toString(Charset.defaultCharset())
+            if (file.zipEntry.name != "index.json") {
+                dictionary.entries.addAll(loadDictionaryFromString(inputString))
+            } else {
+                dictionary.metadata = loadMetadataFromString(inputString)
+            }
+        }
+        return dictionary
+    }
 
     private fun loadDictionaries(pathnames: List<String>): List<Dictionary> {
         val dictionaries: MutableList<Dictionary> = mutableListOf()

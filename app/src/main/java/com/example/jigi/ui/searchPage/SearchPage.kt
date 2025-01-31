@@ -1,6 +1,5 @@
 package com.example.jigi.ui.searchPage
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,8 +20,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.CheckBoxOutlineBlank
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.ExpandLess
@@ -44,8 +41,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -55,25 +50,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHost
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import com.example.jigi.AppViewModelProvider
 import com.example.jigi.R
-import com.example.jigi.SearchScreen
-import com.example.jigi.ui.dictionaryResultsPage.DictionaryResultsViewModel
 import com.example.jigi.ui.theme.onBackgroundDark
 import com.example.jigi.ui.theme.onPrimaryContainerDark
 import com.example.jigi.ui.theme.onPrimaryContainerLight
@@ -90,6 +76,7 @@ import com.example.jigi.ui.theme.tertiaryContainerLight
 fun SearchPage(
     searchPageViewModel: SearchPageViewModel = viewModel(),
     navigateToSearch: () -> Unit,
+    navigateToSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -142,6 +129,7 @@ fun SearchPage(
                 updateDictionaryState = {
                     searchPageViewModel.setSearchOption(it)
                 },
+                onSettingsButtonClicked = navigateToSettings
             )
         }
 
@@ -242,6 +230,7 @@ fun ExtraButtonsGrid(
     selectSearchOption: (SearchOption) -> Unit,
     onUndoClicked: () -> Unit,
     onCanvasClear: () -> Unit,
+    onSettingsButtonClicked: () -> Unit,
     updateDictionaryState: (SearchOption) -> Unit,
 ) {
     Column(
@@ -261,7 +250,10 @@ fun ExtraButtonsGrid(
             modifier = Modifier.padding(bottom = 8.dp)
         ) {
             SearchHistoryButton(Modifier.padding(end = 8.dp))
-            SettingsButton(Modifier.padding())
+            SettingsButton(
+                onSettingsButtonClicked = onSettingsButtonClicked,
+                modifier = Modifier.padding()
+            )
         }
 
         Row {
@@ -406,22 +398,15 @@ fun SearchHistoryButton(modifier: Modifier = Modifier) {
     }
 }
 
-@Composable
-fun ImportDictionaryButton(modifier: Modifier = Modifier) {
-    FloatingActionButton(
-        onClick = { },
-        containerColor = primaryContainerLight,
-        contentColor = onPrimaryContainerLight,
-        modifier = modifier
-    ) {
-        Icon(painterResource(id = R.drawable.upload2), "Import Dictionary Button.")
-    }
-}
+
 
 @Composable
-fun SettingsButton(modifier: Modifier = Modifier) {
+fun SettingsButton(
+    onSettingsButtonClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     FloatingActionButton(
-        onClick = { },
+        onClick = { onSettingsButtonClicked() },
         containerColor = secondaryContainerLight,
         contentColor = onSecondaryContainerLight,
         modifier = modifier

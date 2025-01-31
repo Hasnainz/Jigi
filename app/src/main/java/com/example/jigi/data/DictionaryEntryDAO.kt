@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DictionaryEntryDAO {
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entry: DictionaryEntry)
 
     @Update
@@ -19,15 +19,18 @@ interface DictionaryEntryDAO {
     @Delete
     suspend fun delete(entry: DictionaryEntry)
 
+    @Query("DELETE FROM Dictionary")
+    suspend fun nukeTable()
+
     @Query("SELECT * FROM Dictionary WHERE word = :word")
     fun getExactWord(word: String): Flow<List<DictionaryEntry>>
 
-    @Query("SELECT * FROM Dictionary WHERE word LIKE '%' + :word + '%'")
+    @Query("SELECT * FROM Dictionary WHERE word LIKE '%' || :word || '%'")
     fun getContainsWord(word: String): Flow<List<DictionaryEntry>>
 
-    @Query("SELECT * FROM Dictionary WHERE word = :word + '%'")
+    @Query("SELECT * FROM Dictionary WHERE word = :word || '%'")
     fun getForwardsWord(word: String): Flow<List<DictionaryEntry>>
 
-    @Query("SELECT * FROM Dictionary WHERE word = '%' + :word")
+    @Query("SELECT * FROM Dictionary WHERE word = '%' || :word")
     fun getBackwardsWord(word: String): Flow<List<DictionaryEntry>>
 }

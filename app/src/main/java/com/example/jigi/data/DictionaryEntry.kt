@@ -3,10 +3,8 @@ package com.example.jigi.data
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "Dictionary")
+@Entity(tableName = "Dictionary", primaryKeys = ["dictionary", "word"])
 data class DictionaryEntry(
-    @PrimaryKey(autoGenerate = true)
-    val id : Int = 0,
     val dictionary : String,
     val word : String,
     val reading : String,

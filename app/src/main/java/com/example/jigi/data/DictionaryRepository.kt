@@ -9,6 +9,8 @@ interface DictionaryRepository {
 
     suspend fun delete(entry: DictionaryEntry)
 
+    suspend fun nukeTable()
+
     fun getExactWord(word: String): Flow<List<DictionaryEntry>>
 
     fun getContainsWord(word: String): Flow<List<DictionaryEntry>>

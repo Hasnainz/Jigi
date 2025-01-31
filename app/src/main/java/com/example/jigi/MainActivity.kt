@@ -4,11 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import com.example.jigi.ui.searchPage.SearchPage
+import com.example.jigi.ui.navigation.JigiApp
 
 import com.example.jigi.ui.theme.*
 
@@ -30,8 +26,8 @@ class MainActivity : ComponentActivity() {
 
 //TODO :: Search page with dictionary
 //TODO :: Settings page for Dictionary
-//TODO :: Search Options, Conjugation Settings
 //TODO :: Handwriting Recognition page
+//TODO :: Search Options
 
 
 
