@@ -1,5 +1,6 @@
 package com.example.jigi.ui.searchPage
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
@@ -23,4 +24,5 @@ enum class SearchOption{
 data class SearchPageUiState(
     val selectedSearchOption: SearchOption = SearchOption.Contains,
     val query: String = "",
+    val kanjiList: List<String> = listOf()
 )

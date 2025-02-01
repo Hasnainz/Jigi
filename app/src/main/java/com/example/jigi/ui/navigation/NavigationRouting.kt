@@ -1,5 +1,7 @@
 package com.example.jigi.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -19,6 +21,8 @@ import com.example.jigi.ui.searchPage.SearchPage
 import com.example.jigi.ui.searchPage.SearchPageViewModel
 import com.example.jigi.ui.dictionaryResultsPage.DictionaryResultsViewModel
 import com.example.jigi.ui.settingsPage.SettingsPage
+import com.example.jigi.ui.settingsPage.SettingsPageUiState
+import com.example.jigi.ui.settingsPage.SettingsViewModel
 
 
 enum class SearchScreen(@StringRes val title: Int) {
@@ -29,10 +33,12 @@ enum class SearchScreen(@StringRes val title: Int) {
     Settings(title = R.string.settings_page),
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun JigiApp(
     searchPageViewModel: SearchPageViewModel = viewModel(),
     dictionaryResultsViewModel: DictionaryResultsViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    settingsViewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navController: NavHostController = rememberNavController()
 ) {
 
@@ -72,7 +78,9 @@ fun JigiApp(
                 )
             }
             composable(route = SearchScreen.Settings.name) {
-                SettingsPage()
+                SettingsPage(
+                    settingsViewModel = settingsViewModel
+                )
             }
         }
     }

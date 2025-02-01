@@ -60,6 +60,8 @@ dependencies {
 
     implementation(libs.androidx.material.icons.extended)
 
+    implementation(libs.digital.ink.recognition)
+
 
     //Room
     implementation(libs.androidx.room.runtime)

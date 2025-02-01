@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckBoxOutlineBlank
 import androidx.compose.material.icons.rounded.Clear
@@ -71,7 +72,6 @@ import com.example.jigi.ui.theme.secondaryContainerLight
 import com.example.jigi.ui.theme.tertiaryContainerLight
 
 
-
 @Composable
 fun SearchPage(
     searchPageViewModel: SearchPageViewModel = viewModel(),
@@ -94,7 +94,10 @@ fun SearchPage(
                 .fillMaxHeight(0.5f),
             lines = searchPageViewModel.lines,
             addLineSize = { searchPageViewModel.addLineSize() },
-            addLine = { searchPageViewModel.addLine(it) }
+            addLine = { searchPageViewModel.addLine(it) },
+            initStrokeBuilder = { searchPageViewModel.initStrokeBuilder() },
+            addStrokeToBuilder = { x, y -> searchPageViewModel.addStrokeToBuilder(x, y) },
+            endStrokeBuilder = { searchPageViewModel.endStrokeBuilder() },
         )
         SearchBar(
             query = searchPageViewModel.query,
@@ -114,7 +117,7 @@ fun SearchPage(
                     .weight(3f)
                     .fillMaxHeight()
                     .padding(top = 8.dp, bottom = 60.dp),
-                kanji = searchPageViewModel.kanjiList,
+                kanji = searchPageUiState.kanjiList,
                 addKanjiToQuery = { searchPageViewModel.addKanjiToQuery(it) },
             )
             ExtraButtonsGrid(
@@ -141,7 +144,10 @@ fun HandwritingPad(
     modifier: Modifier = Modifier,
     lines: List<Line> = emptyList(),
     addLineSize: () -> Unit,
-    addLine: (Line) -> Unit
+    addLine: (Line) -> Unit,
+    initStrokeBuilder: () -> Unit,
+    addStrokeToBuilder: (Float, Float) -> Unit,
+    endStrokeBuilder: () -> Unit,
 ) {
     Canvas(
         modifier = modifier
@@ -150,11 +156,19 @@ fun HandwritingPad(
             .fillMaxSize()
             .pointerInput(Unit) {
                 detectDragGestures(
-                    onDragStart = { addLineSize() },
-                    onDragEnd = { addLineSize() },
-                    onDragCancel = { addLineSize() },
+                    onDragStart = {
+                        addLineSize()
+                        initStrokeBuilder()
+                    },
+                    onDragEnd = {
+                        addLineSize()
+                        endStrokeBuilder()
+                                },
+                    onDragCancel = { addLineSize()
+                                   endStrokeBuilder() },
                     onDrag = { change, dragAmount ->
                         change.consume()
+                        addStrokeToBuilder(change.position.x, change.position.y)
                         val line = Line(
                             start = change.position - dragAmount,
                             end = change.position
@@ -399,7 +413,6 @@ fun SearchHistoryButton(modifier: Modifier = Modifier) {
 }
 
 
-
 @Composable
 fun SettingsButton(
     onSettingsButtonClicked: () -> Unit,
@@ -430,37 +443,39 @@ fun SearchBar(
             .clip(RoundedCornerShape(20.dp))
 
     ) {
-        TextField(
-            value = query,
-            onValueChange = onQueryChange,
-            modifier = Modifier
-                .fillMaxHeight()
-                .horizontalScroll(rememberScrollState()),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            singleLine = true,
-            trailingIcon = {
-                Icon(
-                    Icons.Rounded.Clear,
-                    contentDescription = "Clear Query",
-                    tint = onPrimaryContainerDark,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .clickable { clearQuery() })
-            },
+        SelectionContainer {
+            TextField(
+                value = query,
+                onValueChange = onQueryChange,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .horizontalScroll(rememberScrollState()),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                singleLine = true,
+                trailingIcon = {
+                    Icon(
+                        Icons.Rounded.Clear,
+                        contentDescription = "Clear Query",
+                        tint = onPrimaryContainerDark,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .clickable { clearQuery() })
+                },
 
 
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = primaryContainerDark,
-                focusedContainerColor = primaryContainerDark,
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = primaryContainerDark,
+                    focusedContainerColor = primaryContainerDark,
 
-                unfocusedIndicatorColor = primaryContainerDark,
-                focusedIndicatorColor = primaryContainerDark,
+                    unfocusedIndicatorColor = primaryContainerDark,
+                    focusedIndicatorColor = primaryContainerDark,
 
-                focusedTextColor = onPrimaryContainerDark,
-                cursorColor = onPrimaryContainerDark,
-            ),
-            shape = RectangleShape
-        )
+                    focusedTextColor = onPrimaryContainerDark,
+                    cursorColor = onPrimaryContainerDark,
+                ),
+                shape = RectangleShape
+            )
+        }
         IconButton(
             onClick = { onSearchButtonClicked(query.text) },
             modifier = Modifier

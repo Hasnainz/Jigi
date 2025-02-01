@@ -1,6 +1,7 @@
 package com.example.jigi.ui.searchPage
 
 import android.util.Log
+import androidx.compose.runtime.currentCompositionErrors
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
@@ -10,7 +11,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.text.TextRange
+import com.google.mlkit.common.MlKitException
+import com.google.mlkit.common.model.DownloadConditions
+import com.google.mlkit.common.model.RemoteModelManager
+import com.google.mlkit.vision.digitalink.DigitalInkRecognition
+import com.google.mlkit.vision.digitalink.DigitalInkRecognitionModel
+import com.google.mlkit.vision.digitalink.DigitalInkRecognitionModelIdentifier
+import com.google.mlkit.vision.digitalink.DigitalInkRecognizer
+import com.google.mlkit.vision.digitalink.DigitalInkRecognizerOptions
+import com.google.mlkit.vision.digitalink.Ink
+import com.google.mlkit.vision.digitalink.RecognitionResult
 import kotlinx.coroutines.flow.update
 
 class SearchPageViewModel : ViewModel() {
@@ -19,6 +31,15 @@ class SearchPageViewModel : ViewModel() {
 
     val searchOptions: List<SearchOption> = SearchOption.entries.toList()
 
+    private lateinit var modelIdentifier: DigitalInkRecognitionModelIdentifier
+    private var recognizer: DigitalInkRecognizer
+    private var model: DigitalInkRecognitionModel
+
+    private val remoteModelManager = RemoteModelManager.getInstance()
+
+    private var inkBuilder = Ink.Builder()
+    private lateinit var strokeBuilder: Ink.Stroke.Builder
+
 
     var lines = mutableStateListOf<Line>()
         private set
@@ -26,14 +47,61 @@ class SearchPageViewModel : ViewModel() {
     private var linesSize = mutableStateListOf<Int>()
 
 
-    var query by mutableStateOf(TextFieldValue(
-        text = "",
-        selection = TextRange(index = 0)
-    ))
-
-    var kanjiList = mutableStateListOf(
-        "週"
+    var query by mutableStateOf(
+        TextFieldValue(
+            text = "",
+            selection = TextRange(index = 0)
+        )
     )
+
+
+    init {
+        try {
+            modelIdentifier = DigitalInkRecognitionModelIdentifier.fromLanguageTag("ja-JP")!!
+        } catch (e: Exception) {
+            Log.e("Model Exception", e.message.toString())
+        }
+        model = DigitalInkRecognitionModel.builder(modelIdentifier).build()
+        remoteModelManager.download(model, DownloadConditions.Builder().build())
+            .addOnSuccessListener {
+                Log.i("DOGE", "Model downloaded")
+            }
+            .addOnFailureListener { e: Exception ->
+                Log.e("DOGE", "Error while downloading a model: $e")
+            }
+        recognizer = DigitalInkRecognition.getClient(
+            DigitalInkRecognizerOptions.builder(model).build()
+        )
+    }
+
+    fun initStrokeBuilder() {
+        strokeBuilder = Ink.Stroke.builder()
+        Log.d("DOGE", strokeBuilder.toString())
+    }
+
+    fun addStrokeToBuilder(x: Float, y: Float) {
+        Log.d("DOGE", "x:${x}, y:${y}")
+        strokeBuilder.addPoint(Ink.Point.create(x, y))
+    }
+
+    fun endStrokeBuilder() {
+        inkBuilder.addStroke(strokeBuilder.build())
+        val ink = inkBuilder.build()
+        Log.d("DOGE", recognizer.toString())
+        recognizer.recognize(ink)
+            .addOnSuccessListener { result: RecognitionResult ->
+                Log.d("DOGE", result.candidates.toString())
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        kanjiList = result.candidates.map { candidate -> candidate.text }
+                            .filter { candidate -> candidate.length == 1 }
+                    )
+                }
+            }
+            .addOnFailureListener { e: Exception ->
+                Log.d("DOGE", "Error during recognition: $e")
+            }
+    }
 
     fun setSearchOption(searchOption: SearchOption) {
         _uiState.update { currentState ->
@@ -63,10 +131,19 @@ class SearchPageViewModel : ViewModel() {
     }
 
 
-
     fun canvasClear() {
         lines.clear()
         linesSize.clear()
+
+        inkBuilder = Ink.Builder()
+        strokeBuilder = Ink.Stroke.builder()
+
+        _uiState.update { currentState ->
+            currentState.copy(
+                kanjiList = listOf()
+            )
+        }
+
     }
 
     fun addLineSize() {
@@ -89,7 +166,7 @@ class SearchPageViewModel : ViewModel() {
     }
 
     fun addKanjiToQuery(kanji: String) {
-        val queryWithInsertedKanji : String =
+        val queryWithInsertedKanji: String =
             StringBuilder(query.text).insert(query.selection.start, kanji).toString()
         val updatedCursorIndex = TextRange(index = query.selection.start + 1)
         query = TextFieldValue(
@@ -97,7 +174,6 @@ class SearchPageViewModel : ViewModel() {
             selection = updatedCursorIndex
         )
     }
-
 
 
 }

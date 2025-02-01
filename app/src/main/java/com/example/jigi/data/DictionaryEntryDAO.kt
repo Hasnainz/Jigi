@@ -28,9 +28,9 @@ interface DictionaryEntryDAO {
     @Query("SELECT * FROM Dictionary WHERE word LIKE '%' || :word || '%'")
     fun getContainsWord(word: String): Flow<List<DictionaryEntry>>
 
-    @Query("SELECT * FROM Dictionary WHERE word = :word || '%'")
+    @Query("SELECT * FROM Dictionary WHERE word LIKE :word || '%'")
     fun getForwardsWord(word: String): Flow<List<DictionaryEntry>>
 
-    @Query("SELECT * FROM Dictionary WHERE word = '%' || :word")
+    @Query("SELECT * FROM Dictionary WHERE word LIKE '%' || :word")
     fun getBackwardsWord(word: String): Flow<List<DictionaryEntry>>
 }

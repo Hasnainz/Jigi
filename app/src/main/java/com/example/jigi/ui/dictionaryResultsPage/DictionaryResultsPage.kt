@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
@@ -29,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.Placeholder
@@ -57,7 +59,10 @@ fun DictionaryResultsPage(
 
     val coroutineScope = rememberCoroutineScope()
     coroutineScope.launch {
-        dictionaryResultsViewModel.search(searchPageState.value.query, searchPageState.value.selectedSearchOption)
+        dictionaryResultsViewModel.search(
+            searchPageState.value.query,
+            searchPageState.value.selectedSearchOption
+        )
     }
 
     val queryResult = dictionaryResultsViewModel.dictionaryUiState.resultList
@@ -67,15 +72,18 @@ fun DictionaryResultsPage(
 //        Text("$queryResult")
 //    }
 
-    LazyColumn (
+    LazyColumn(
         modifier = modifier,
     ) {
         items(queryResult) { entry ->
-            DictionaryEntryCard(word = entry.word, reading = entry.reading, definition = entry.definition)
+            DictionaryEntryCard(
+                word = entry.word,
+                reading = entry.reading,
+                definition = entry.definition
+            )
         }
 
     }
-
 
 
 }
@@ -88,49 +96,69 @@ fun DictionaryEntryCard(
     definition: String = "",
     modifier: Modifier = Modifier
 ) {
-    Card(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp
-        ),
-        colors = CardDefaults.cardColors(
-            containerColor = primaryContainerLight,
-            contentColor = onPrimaryContainerLight
-        ),
-        modifier = modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp)
-    ){
+    SelectionContainer {
+        Card(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 4.dp
+            ),
+            colors = CardDefaults.cardColors(
+                containerColor = primaryContainerLight,
+                contentColor = onPrimaryContainerLight
+            ),
+            modifier = modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp)
+        ) {
 
-        Column() {
-            Row(
-                modifier = modifier.padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
-            ) {
-                TextWithReading(listOf(
-                    TextData(
-                        text = word,
-                        reading = reading
-                    )),
-                    showReadings = true
+            Column() {
+                TextAndReading(
+                    word = word,
+                    reading = reading,
+                    modifier = Modifier.padding(start = 8.dp, top = 4.dp, bottom = 4.dp)
                 )
-//                Text(
-//                    text = word,
-//                    style = MaterialTheme.typography.headlineMedium,
-//                )
-//                Text(
-//                    text = reading,
-//                    style = MaterialTheme.typography.bodyMedium,
-//                )
+
+                HorizontalDivider(
+                    color = onPrimaryContainerLight,
+                    modifier = modifier.padding(top = 4.dp, bottom = 4.dp)
+                )
+                Text(
+                    text = definition,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = modifier.padding(
+                        start = 8.dp,
+                        end = 8.dp,
+                        top = 4.dp,
+                        bottom = 4.dp
+                    ),
+                )
             }
 
-            HorizontalDivider(
-                color = onPrimaryContainerLight,
-                modifier = modifier.padding(top = 4.dp, bottom = 4.dp)
-            )
-            Text(
-                text = definition,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = modifier.padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
-            )
         }
+    }
+}
 
+@Composable
+fun TextAndReading(
+    word: String,
+    reading: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Text(text = reading)
+        Text(
+            text = word,
+            style = MaterialTheme.typography.headlineLarge,
+        )
+    }
+
+}
+
+
+@Preview
+@Composable
+internal fun PreviewTextAndReading() {
+    MaterialTheme {
+        TextAndReading("守り", "まもり")
     }
 }
 
@@ -153,8 +181,6 @@ fun TextWithReading(
     Text(
         text = text,
         inlineContent = inlineContent,
-//        fontSize = 36.dp,
-        modifier = modifier
     )
 }
 

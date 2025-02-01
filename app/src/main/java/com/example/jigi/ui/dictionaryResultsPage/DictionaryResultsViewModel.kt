@@ -35,13 +35,22 @@ class DictionaryResultsViewModel(private val dictionaryRepository: DictionaryRep
                 return
             }
             viewModelScope.launch {
-                val queryResult = dictionaryRepository.getContainsWord(query)
-                    .filterNotNull()
-                    .first()
                 dictionaryUiState = when(option) {
-                    SearchOption.Contains -> DictionaryResultsUiState(queryResult)
-                    SearchOption.Exact -> DictionaryResultsUiState(queryResult)
-                    SearchOption.Forwards -> DictionaryResultsUiState(queryResult)
+                    SearchOption.Contains -> DictionaryResultsUiState(
+                        dictionaryRepository.getContainsWord(query)
+                            .filterNotNull()
+                            .first()
+                    )
+                    SearchOption.Exact -> DictionaryResultsUiState(
+                        dictionaryRepository.getExactWord(query)
+                            .filterNotNull()
+                            .first()
+                    )
+                    SearchOption.Forwards -> DictionaryResultsUiState(
+                            dictionaryRepository.getForwardsWord(query)
+                                .filterNotNull()
+                                .first()
+                    )
                 }
             }
         }

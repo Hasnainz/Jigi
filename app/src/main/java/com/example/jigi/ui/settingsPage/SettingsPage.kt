@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.room.Delete
@@ -38,6 +39,7 @@ fun SettingsPage(
     settingsViewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ) {
+    val uiState = settingsViewModel.uiState.collectAsState()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -54,7 +56,13 @@ fun SettingsPage(
 
 
     Column {
-        Text("Settings Page")
+        if (uiState.value.isLoadingDictionary) {
+            Column {
+                Text(uiState.value.statusMessage)
+                Text("${uiState.value.loadingCurrentSize}/${uiState.value.loadingTotalSize}")
+            }
+
+        }
         ImportDictionaryButton(importDictionaryOnClick = {
             filePickerLauncher.launch("*/*")
         })
