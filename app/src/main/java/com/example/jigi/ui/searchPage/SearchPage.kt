@@ -55,9 +55,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jigi.R
@@ -98,6 +100,7 @@ fun SearchPage(
             initStrokeBuilder = { searchPageViewModel.initStrokeBuilder() },
             addStrokeToBuilder = { x, y -> searchPageViewModel.addStrokeToBuilder(x, y) },
             endStrokeBuilder = { searchPageViewModel.endStrokeBuilder() },
+            setHandwritingPadSize = { searchPageViewModel.setHandwritingPadSize(it) }
         )
         SearchBar(
             query = searchPageViewModel.query,
@@ -148,12 +151,14 @@ fun HandwritingPad(
     initStrokeBuilder: () -> Unit,
     addStrokeToBuilder: (Float, Float) -> Unit,
     endStrokeBuilder: () -> Unit,
+    setHandwritingPadSize: (IntSize) -> Unit,
 ) {
     Canvas(
         modifier = modifier
             .clip(RoundedCornerShape(20.dp))
             .background(primaryContainerLight)
             .fillMaxSize()
+            .onGloballyPositioned { layoutCoordinates -> setHandwritingPadSize(layoutCoordinates.size) }
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragStart = {

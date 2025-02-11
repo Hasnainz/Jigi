@@ -62,6 +62,8 @@ dependencies {
 
     implementation(libs.digital.ink.recognition)
 
+    implementation(libs.text.recognition.japanese)
+
 
     //Room
     implementation(libs.androidx.room.runtime)

@@ -14,6 +14,7 @@ composeBom = "2024.04.01"
 navigationCompose = "2.8.5"
 roomKtx = "2.6.1"
 runtimeLivedata = "1.7.6"
+textRecognitionJapanese = "16.0.1"
 
 [libraries]
 android-compose-furigana = { module = "com.github.mainrs:android-compose-furigana", version.ref = "androidComposeFurigana" }
@@ -39,6 +40,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+text-recognition-japanese = { module = "com.google.mlkit:text-recognition-japanese", version.ref = "textRecognitionJapanese" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
