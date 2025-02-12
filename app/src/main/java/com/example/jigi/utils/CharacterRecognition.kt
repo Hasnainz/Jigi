@@ -45,13 +45,10 @@ class CharacterRecognition(canvasSize: IntSize) {
 
 
         val inputShape = interpreter.getInputTensor(0).shape()
-        Log.d("DOGE", interpreter.getInputTensor(0).dataType().name)
-        for (i in inputShape) {
-            Log.d("DOGE", i.toString())
-        }
+
         inputImageWidth = inputShape[1]
         inputImageHeight = inputShape[2]
-        modelInputSize = FLOAT_TYPE_SIZE * inputImageWidth * inputImageHeight * PIXEL_SIZE
+//        modelInputSize = FLOAT_TYPE_SIZE * inputImageWidth * inputImageHeight * PIXEL_SIZE
 
     }
 
@@ -70,19 +67,12 @@ class CharacterRecognition(canvasSize: IntSize) {
             }
         }
 
-        return heap.map { it.first }
+        return (heap.sortedWith() { p1, p2 -> p2.second.compareTo(p1.second) }).map { it.first }
+
     }
 
 
     private fun runInference(bitmap: Bitmap): List<String> {
-//        val resizedImage = Bitmap.createScaledBitmap(
-//            bitmap,
-//            inputImageWidth,
-//            inputImageHeight,
-//            true
-//        )
-//        val byteBuffer = convertBitmapToByteBuffer(resizedImage)
-
         val imageProcessor = ImageProcessor.Builder()
                 .add(ResizeOp(inputImageHeight, inputImageWidth, ResizeOp.ResizeMethod.BILINEAR))
                 .add(TransformToGrayscaleOp())
@@ -99,12 +89,13 @@ class CharacterRecognition(canvasSize: IntSize) {
             FloatArray(OUTPUT_CLASSES_COUNT)
         }
 
-        val probabilityBuffer = TensorBuffer.createFixedSize(intArrayOf(1, 1001), DataType.UINT8)
+        val probabilityBuffer = TensorBuffer.createFixedSize(intArrayOf(1, OUTPUT_CLASSES_COUNT), DataType.FLOAT32)
 
         // Run inference with the input data.
-        interpreter.run(tensorImage.buffer, output)
+        interpreter.run(tensorImage.buffer, probabilityBuffer.buffer)
 
-        val o = output[0]
+//        val o = output
+        val o = probabilityBuffer.floatArray
         val p = o.maxOrNull()
         val i = o.indexOfFirst {
             if (p != null) {
@@ -118,7 +109,7 @@ class CharacterRecognition(canvasSize: IntSize) {
         Log.d("DOGE", i.toString())
         labelsMap[i]?.let { Log.d("DOGE", it) }
 
-        val indexes = getKLargestIndexes(output[0], 10)
+        val indexes = getKLargestIndexes(o, 10)
 
         return indexes.map { labelsMap[it].toString() }
 
@@ -149,6 +140,7 @@ class CharacterRecognition(canvasSize: IntSize) {
     fun recognise(lines: SnapshotStateList<Line>): List<String> {
         val mybitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(mybitmap)
+        canvas.drawColor(rgb(255,255,255))
         val paint = Paint()
         paint.strokeWidth = 10f
         paint.isAntiAlias = true

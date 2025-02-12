@@ -132,8 +132,8 @@ class SearchPageViewModel : ViewModel() {
 
     fun canvasUndo() {
         if (linesSize.size >= 2) {
-            val a = linesSize.elementAt(linesSize.lastIndex - 1)
-            val b = linesSize.elementAt(linesSize.lastIndex)
+//            val a = linesSize.elementAt(linesSize.lastIndex - 1)
+//            val b = linesSize.elementAt(linesSize.lastIndex)
 //            Log.d("Lines size ranges", "a=$a, b=$b")
             lines.removeRange(
                 linesSize.elementAt(linesSize.lastIndex - 1),
@@ -141,6 +141,7 @@ class SearchPageViewModel : ViewModel() {
             )
             linesSize.removeRange(linesSize.lastIndex - 1, linesSize.lastIndex + 1);
         }
+        recognise()
     }
 
 

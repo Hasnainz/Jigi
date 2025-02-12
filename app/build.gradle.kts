@@ -1,3 +1,4 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -66,15 +67,13 @@ dependencies {
     implementation(libs.text.recognition.japanese)
 
 
-    //Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.runtime.livedata)
-//    implementation(libs.tensorflow.lite.support)
-//    implementation(libs.tensorflow.lite.metadata)
-//    implementation(libs.tensorflow.lite.gpu)
+
     implementation(libs.tensorflow.lite.metadata)
     implementation(libs.litert.support.api)
     implementation(libs.litert)
+
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
