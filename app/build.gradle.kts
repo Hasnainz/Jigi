@@ -44,6 +44,7 @@ android {
     }
     buildFeatures {
         compose = true
+        mlModelBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -68,6 +69,12 @@ dependencies {
     //Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.runtime.livedata)
+//    implementation(libs.tensorflow.lite.support)
+//    implementation(libs.tensorflow.lite.metadata)
+//    implementation(libs.tensorflow.lite.gpu)
+    implementation(libs.tensorflow.lite.metadata)
+    implementation(libs.litert.support.api)
+    implementation(libs.litert)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 

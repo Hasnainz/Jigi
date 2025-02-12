@@ -1,5 +1,7 @@
 package com.example.jigi.ui.searchPage
 
+import android.content.Context
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.text.input.TextFieldValue
@@ -30,9 +32,9 @@ class SearchPageViewModel : ViewModel() {
 
     val searchOptions: List<SearchOption> = SearchOption.entries.toList()
 
-    private lateinit var modelIdentifier: DigitalInkRecognitionModelIdentifier
-    private var recognizer: DigitalInkRecognizer
-    private var model: DigitalInkRecognitionModel
+//    private lateinit var modelIdentifier: DigitalInkRecognitionModelIdentifier
+//    private var recognizer: DigitalInkRecognizer
+//    private var model: DigitalInkRecognitionModel
 
     private val remoteModelManager = RemoteModelManager.getInstance()
 
@@ -56,62 +58,63 @@ class SearchPageViewModel : ViewModel() {
     )
 
 
-    init {
-        try {
-            modelIdentifier = DigitalInkRecognitionModelIdentifier.fromLanguageTag("ja-JP")!!
-        } catch (e: Exception) {
-//            Log.e("Model Exception", e.message.toString())
-        }
-        model = DigitalInkRecognitionModel.builder(modelIdentifier).build()
-        remoteModelManager.download(model, DownloadConditions.Builder().build())
-            .addOnSuccessListener {
-//                Log.i("DOGE", "Model downloaded")
-            }
-            .addOnFailureListener { e: Exception ->
-//                Log.e("DOGE", "Error while downloading a model: $e")
-            }
-        recognizer = DigitalInkRecognition.getClient(
-            DigitalInkRecognizerOptions.builder(model).build()
-        )
-    }
+//    init {
+//        try {
+//            modelIdentifier = DigitalInkRecognitionModelIdentifier.fromLanguageTag("ja-JP")!!
+//        } catch (e: Exception) {
+////            Log.e("Model Exception", e.message.toString())
+//        }
+//        model = DigitalInkRecognitionModel.builder(modelIdentifier).build()
+//        remoteModelManager.download(model, DownloadConditions.Builder().build())
+//            .addOnSuccessListener {
+////                Log.i("DOGE", "Model downloaded")
+//            }
+//            .addOnFailureListener { e: Exception ->
+////                Log.e("DOGE", "Error while downloading a model: $e")
+//            }
+//        recognizer = DigitalInkRecognition.getClient(
+//            DigitalInkRecognizerOptions.builder(model).build()
+//        )
+//    }
 
-    fun setHandwritingPadSize(size: IntSize) {
+    fun setHandwritingPadSize(context: Context, size: IntSize) {
         _uiState.update { currentState ->
             currentState.copy(
                 canvasSize = size,
             )
         }
         characterRecogniser = CharacterRecognition(_uiState.value.canvasSize)
+        characterRecogniser.createInterpreter(context)
     }
 
-    fun initStrokeBuilder() {
-        strokeBuilder = Ink.Stroke.builder()
-//        Log.d("DOGE", strokeBuilder.toString())
-    }
-
-    fun addStrokeToBuilder(x: Float, y: Float) {
-//        Log.d("DOGE", "x:${x}, y:${y}")
-        strokeBuilder.addPoint(Ink.Point.create(x, y))
-    }
-
-    fun endStrokeBuilder() {
-        inkBuilder.addStroke(strokeBuilder.build())
-        val ink = inkBuilder.build()
-//        Log.d("DOGE", recognizer.toString())
-        recognizer.recognize(ink)
-            .addOnSuccessListener { result: RecognitionResult ->
-//                Log.d("DOGE", result.candidates.toString())
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        kanjiList = result.candidates.map { candidate -> candidate.text }
-                            .filter { candidate -> candidate.length == 1 }
-                    )
-                }
-            }
-            .addOnFailureListener { e: Exception ->
-//                Log.d("DOGE", "Error during recognition: $e")
-            }
-    }
+//    fun initStrokeBuilder() {
+//        strokeBuilder = Ink.Stroke.builder()
+////        Log.d("DOGE", strokeBuilder.toString())
+//    }
+//
+//    fun addStrokeToBuilder(x: Float, y: Float) {
+////        Log.d("DOGE", "x:${x}, y:${y}")
+//        strokeBuilder.addPoint(Ink.Point.create(x, y))
+//    }
+//
+//    fun endStrokeBuilder() {
+//        inkBuilder.addStroke(strokeBuilder.build())
+//        val ink = inkBuilder.build()
+////        Log.d("DOGE", recognizer.toString())
+//        recognizer.recognize(ink)
+//            .addOnSuccessListener { result: RecognitionResult ->
+////                Log.d("DOGE", result.candidates.toString())
+//                _uiState.update { currentState ->
+//                    currentState.copy(
+//                        kanjiList = result.candidates.map { candidate -> candidate.text }
+//                            .filter { candidate -> candidate.length == 1 }
+//                    )
+//                }
+//            }
+//            .addOnFailureListener { e: Exception ->
+////                Log.d("DOGE", "Error during recognition: $e")
+//            }
+//    }
 
     fun setSearchOption(searchOption: SearchOption) {
         _uiState.update { currentState ->
@@ -142,11 +145,13 @@ class SearchPageViewModel : ViewModel() {
 
 
     fun canvasClear() {
+
+
         lines.clear()
         linesSize.clear()
 
-        inkBuilder = Ink.Builder()
-        strokeBuilder = Ink.Stroke.builder()
+//        inkBuilder = Ink.Builder()
+//        strokeBuilder = Ink.Stroke.builder()
 
         _uiState.update { currentState ->
             currentState.copy(
@@ -156,13 +161,23 @@ class SearchPageViewModel : ViewModel() {
 
     }
 
+    fun recognise() {
+        val results = characterRecogniser.recognise(lines)
+
+        _uiState.update { currentState ->
+            currentState.copy(
+                kanjiList = results
+            )
+        }
+    }
+
     fun addLineSize() {
         linesSize.add(lines.size)
     }
 
     fun addLine(line: Line) {
         lines.add(line)
-        characterRecogniser.recognise(lines)
+
     }
 
     fun onQueryChanged(modifiedQuery: TextFieldValue) {
@@ -170,7 +185,6 @@ class SearchPageViewModel : ViewModel() {
     }
 
     fun clearQuery() {
-        characterRecogniser.logGrid()
         query = TextFieldValue(
             text = "",
             selection = TextRange(0)

@@ -1,5 +1,6 @@
 package com.example.jigi.ui.searchPage
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -56,6 +57,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
@@ -84,6 +86,7 @@ fun SearchPage(
 
 
     val searchPageUiState by searchPageViewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
 
     Column(
@@ -97,10 +100,11 @@ fun SearchPage(
             lines = searchPageViewModel.lines,
             addLineSize = { searchPageViewModel.addLineSize() },
             addLine = { searchPageViewModel.addLine(it) },
-            initStrokeBuilder = { searchPageViewModel.initStrokeBuilder() },
-            addStrokeToBuilder = { x, y -> searchPageViewModel.addStrokeToBuilder(x, y) },
-            endStrokeBuilder = { searchPageViewModel.endStrokeBuilder() },
-            setHandwritingPadSize = { searchPageViewModel.setHandwritingPadSize(it) }
+//            initStrokeBuilder = { searchPageViewModel.initStrokeBuilder() },
+//            addStrokeToBuilder = { x, y -> searchPageViewModel.addStrokeToBuilder(x, y) },
+//            endStrokeBuilder = { searchPageViewModel.endStrokeBuilder() },
+            setHandwritingPadSize = { searchPageViewModel.setHandwritingPadSize(context, it) },
+            recognise = { searchPageViewModel.recognise() }
         )
         SearchBar(
             query = searchPageViewModel.query,
@@ -148,10 +152,11 @@ fun HandwritingPad(
     lines: List<Line> = emptyList(),
     addLineSize: () -> Unit,
     addLine: (Line) -> Unit,
-    initStrokeBuilder: () -> Unit,
-    addStrokeToBuilder: (Float, Float) -> Unit,
-    endStrokeBuilder: () -> Unit,
+//    initStrokeBuilder: () -> Unit,
+//    addStrokeToBuilder: (Float, Float) -> Unit,
+//    endStrokeBuilder: () -> Unit,
     setHandwritingPadSize: (IntSize) -> Unit,
+    recognise: () -> Unit,
 ) {
     Canvas(
         modifier = modifier
@@ -163,17 +168,18 @@ fun HandwritingPad(
                 detectDragGestures(
                     onDragStart = {
                         addLineSize()
-                        initStrokeBuilder()
+//                        initStrokeBuilder()
                     },
                     onDragEnd = {
                         addLineSize()
-                        endStrokeBuilder()
+//                        endStrokeBuilder()
+                        recognise()
                                 },
-                    onDragCancel = { addLineSize()
-                                   endStrokeBuilder() },
+                    onDragCancel = { addLineSize()},
+//                                   endStrokeBuilder() },
                     onDrag = { change, dragAmount ->
                         change.consume()
-                        addStrokeToBuilder(change.position.x, change.position.y)
+//                        addStrokeToBuilder(change.position.x, change.position.y)
                         val line = Line(
                             start = change.position - dragAmount,
                             end = change.position
