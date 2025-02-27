@@ -1,5 +1,6 @@
 package com.example.jigi.data
 
+import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
 interface DictionaryRepository {
@@ -18,5 +19,7 @@ interface DictionaryRepository {
     fun getForwardsWord(word: String): Flow<List<DictionaryEntry>>
 
     fun getBackwardsWord(word: String): Flow<List<DictionaryEntry>>
+
+    fun getUniqueDictionaries(): Flow<List<String>>
 
 }

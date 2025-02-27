@@ -33,4 +33,7 @@ interface DictionaryEntryDAO {
 
     @Query("SELECT * FROM Dictionary WHERE word LIKE '%' || :word")
     fun getBackwardsWord(word: String): Flow<List<DictionaryEntry>>
+
+    @Query("SELECT DISTINCT dictionary FROM Dictionary")
+    fun getUniqueDictionaries(): Flow<List<String>>
 }

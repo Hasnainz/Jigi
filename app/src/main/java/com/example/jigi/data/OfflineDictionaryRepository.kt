@@ -20,4 +20,6 @@ class OfflineDictionaryRepository(private val dictEntryDAO: DictionaryEntryDAO) 
 
     override fun getBackwardsWord(word: String): Flow<List<DictionaryEntry>> = dictEntryDAO.getBackwardsWord(word)
 
+    override fun getUniqueDictionaries(): Flow<List<String>> = dictEntryDAO.getUniqueDictionaries()
+
 }

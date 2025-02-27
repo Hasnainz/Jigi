@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.jigi.data.DictionaryEntry
 import com.example.jigi.data.DictionaryRepository
 import com.example.jigi.utils.ImportDictionary
@@ -13,7 +14,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.UUID
 import java.util.zip.ZipInputStream
@@ -30,7 +34,11 @@ class SettingsViewModel(private val dictionaryRepository: DictionaryRepository) 
         try {
             val fileReader = FileReader(context = context)
             _uiState.update { currentState ->
-                currentState.copy(isLoadingDictionary = true, isImportError = false, importStatusMessage = "Reading the dictionary file.")
+                currentState.copy(
+                    isLoadingDictionary = true,
+                    isImportError = false,
+                    importStatusMessage = "Reading the dictionary file."
+                )
             }
             val fileInfo = fileReader.uriToFileInfo(contentUri)
             _uiState.update { currentState ->
@@ -42,31 +50,49 @@ class SettingsViewModel(private val dictionaryRepository: DictionaryRepository) 
             }
             val dictionary = dictionaryImporter.loadDictionary(fileInfo)
             _uiState.update { currentState ->
-                currentState.copy(importStatusMessage = "Importing the dictionary into the database.")
+                currentState.copy(importStatusMessage = "Importing the dictionary into the database. Warning, this may take a while.")
             }
             insertDictionaryIntoDatabase(dictionary)
             _uiState.update { currentState ->
-                currentState.copy(importStatusMessage = "Dictionary has been successfully imported.",)
-            }
-
-        }
-        catch (e: Exception) {
-            _uiState.update { currentState ->
-                currentState.copy(importStatusMessage = "Error in loading the dictionary.",
+                currentState.copy(
+                    importStatusMessage = "Dictionary has been successfully imported.",
+                    loadingCurrentSize = 0,
+                    loadingTotalSize = 1,
                     isLoadingDictionary = false,
-                    isImportError = false)
+                    )
+            }
+            updateExistingDictionaries()
+        } catch (e: Exception) {
+            _uiState.update { currentState ->
+                currentState.copy(
+                    importStatusMessage = "Error in loading the dictionary.",
+                    isLoadingDictionary = false,
+                    isImportError = false,
+                    loadingCurrentSize = 0,
+                    loadingTotalSize = 1,
+                )
             }
 
         }
 
+    }
 
-
+    fun updateExistingDictionaries() {
+        viewModelScope.launch {
+            _uiState.update { currentState ->
+                currentState.copy(
+                    existingDictionaries = dictionaryRepository.getUniqueDictionaries()
+                        .filterNotNull()
+                        .first()
+                )
+            }
+        }
 
     }
 
     private suspend fun insertDictionaryIntoDatabase(dictionary: ImportDictionary.Dictionary) {
         _uiState.update { currentState ->
-            currentState.copy(loadingTotalSize=dictionary.entries.size)
+            currentState.copy(loadingTotalSize = dictionary.entries.size)
         }
 
         for (entry in dictionary.entries) {
@@ -88,9 +114,13 @@ class SettingsViewModel(private val dictionaryRepository: DictionaryRepository) 
 
     suspend fun purgeAllDictionaries() {
         _uiState.update { currentState ->
-            currentState.copy(isDeleted = true, deleteStatusMessage = "Selected dictionaries have been removed.")
+            currentState.copy(
+                isDeleted = true,
+                deleteStatusMessage = "Selected dictionaries have been removed."
+            )
         }
         dictionaryRepository.nukeTable()
+        updateExistingDictionaries()
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.jigi.ui.settingsPage
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -30,6 +31,7 @@ import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,15 +46,17 @@ import com.example.jigi.viewprovider.AppViewModelProvider
 import kotlinx.coroutines.launch
 
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun SettingsPage(
     settingsViewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val uiState = settingsViewModel.uiState.collectAsState()
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+
 
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -68,12 +72,13 @@ fun SettingsPage(
         modifier = modifier.padding(16.dp)
     ) {
         ImportDictionaryBar(
-
-            showProgress = uiState.value.isLoadingDictionary || uiState.value.isImportError,
+            showProgress = uiState.value.isLoadingDictionary,
             progressMessage = uiState.value.importStatusMessage,
             progressPercentage = uiState.value.loadingCurrentSize.toFloat() / uiState.value.loadingTotalSize.toFloat(),
             importDictionaryOnClick = { filePickerLauncher.launch("*/*") },
         )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = uiState.value.existingDictionaries.toString())
         Spacer(modifier = Modifier.height(16.dp))
         DeleteAllDictionariesBar(
             isDeleted = uiState.value.isDeleted,
@@ -109,13 +114,11 @@ fun DeleteAllDictionariesBar(
     ) {
 
         Spacer(modifier = Modifier.width(16.dp))
-        if(isDeleted) {
-            Text(
-                text = deletedStatusMessage,
-                color = onPrimaryContainerLight,
-                modifier = modifier.weight(1f)
-            )
-        }
+        Text(
+            text = deletedStatusMessage,
+            color = onPrimaryContainerLight,
+            modifier = modifier.weight(1f)
+        )
 
         Spacer(modifier = Modifier.width(16.dp))
 
@@ -150,10 +153,18 @@ fun ImportDictionaryBar(
         )
 
         if (showProgress) {
-            CircularProgressIndicator(
-                progress = { progressPercentage },
-                color = onPrimaryContainerLight
-            )
+            if (progressPercentage > 0.01) {
+                CircularProgressIndicator(
+                    progress = { progressPercentage },
+                    color = onPrimaryContainerLight
+                )
+
+            } else {
+                CircularProgressIndicator(
+                    color = onPrimaryContainerLight
+                )
+
+            }
 
         }
         Spacer(modifier = Modifier.width(16.dp))
@@ -171,7 +182,7 @@ fun ImportDictionaryButton(importDictionaryOnClick: () -> Unit, modifier: Modifi
         onClick = importDictionaryOnClick,
         containerColor = backgroundDark,
         contentColor = onBackgroundDark,
-        modifier = modifier
+        modifier = modifier.padding(vertical = 4.dp)
     ) {
         Icon(painterResource(id = R.drawable.upload2), "Import Dictionary Button.")
     }
@@ -189,7 +200,7 @@ fun DeleteAllDictionariesButton(deleteAlLDictionaries: () -> Unit, modifier: Mod
         onClick = { openConfirmation.value = true },
         containerColor = backgroundDark,
         contentColor = onBackgroundDark,
-        modifier = modifier
+        modifier = modifier.padding(vertical = 4.dp)
     ) {
 
         Icon(Icons.Rounded.Delete, "Remove All Dictionaries Button")

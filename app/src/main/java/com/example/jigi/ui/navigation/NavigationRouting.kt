@@ -86,6 +86,7 @@ fun JigiApp(
                 )
             }
             composable(route = SearchScreen.Settings.name) {
+                settingsViewModel.updateExistingDictionaries()
                 SettingsPage(
                     settingsViewModel = settingsViewModel
                 )
