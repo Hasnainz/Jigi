@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.unit.IntSize
 import com.example.jigi.ui.searchPage.Line
+import com.google.mlkit.vision.common.InputImage
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.FileUtil
@@ -24,23 +25,20 @@ import java.util.PriorityQueue
 
 
 class CharacterRecognition(canvasSize: IntSize) {
+    private val kanjiLabels = labels0 + labels1 + labels2
 
 
     private val h = canvasSize.height
     private val w = canvasSize.width
-    private val grid = Array(h) { Array(w) { rgb(255, 255, 255) } }
 
     private lateinit var interpreter: Interpreter
-    private var inputImageWidth: Int = 0
-    private var inputImageHeight: Int = 0
-    private var modelInputSize: Int = 0
+    private var inputImageWidth: Int = 64
+    private var inputImageHeight: Int = 64
 
-    private val FLOAT_TYPE_SIZE = 4
-    private val PIXEL_SIZE = 1
-    private val OUTPUT_CLASSES_COUNT = labelsMap.size
+    private val OUTPUT_CLASSES_COUNT = kanjiLabels.size
 
     fun createInterpreter(context: Context) {
-        val tfLiteOptions = Interpreter.Options()//can be configure to use GPUDelegate
+        val tfLiteOptions = Interpreter.Options()
         interpreter = Interpreter(FileUtil.loadMappedFile(context, "model.tflite"), tfLiteOptions)
 
 
@@ -48,12 +46,10 @@ class CharacterRecognition(canvasSize: IntSize) {
 
         inputImageWidth = inputShape[1]
         inputImageHeight = inputShape[2]
-//        modelInputSize = FLOAT_TYPE_SIZE * inputImageWidth * inputImageHeight * PIXEL_SIZE
-
     }
 
 
-    private fun getKLargestIndexes(probabilities: FloatArray, k: Int): List<Int> {
+    private fun getKLargestIndexes(probabilities: FloatArray, k: Int = 10): List<Int> {
 
         val heap = PriorityQueue<Pair<Int, Float>>(k) {
             p1, p2 ->
@@ -66,15 +62,15 @@ class CharacterRecognition(canvasSize: IntSize) {
                 heap.remove()
             }
         }
-
-        return (heap.sortedWith() { p1, p2 -> p2.second.compareTo(p1.second) }).map { it.first }
+//        heap.filter { it.second > 0.0005 }
+        return ((heap.filter { it.second > 0.0005 }) .sortedWith() { p1, p2 -> p2.second.compareTo(p1.second) }).map { it.first }
 
     }
 
 
     private fun runInference(bitmap: Bitmap): List<String> {
         val imageProcessor = ImageProcessor.Builder()
-                .add(ResizeOp(inputImageHeight, inputImageWidth, ResizeOp.ResizeMethod.BILINEAR))
+//                .add(ResizeOp(64, 64, ResizeOp.ResizeMethod.BILINEAR))
                 .add(TransformToGrayscaleOp())
                 .add(CastOp(DataType.FLOAT32))
                 .build()
@@ -85,61 +81,27 @@ class CharacterRecognition(canvasSize: IntSize) {
         tensorImage.load(bitmap)
         tensorImage = imageProcessor.process(tensorImage)
 
-        val output = Array(1) {
-            FloatArray(OUTPUT_CLASSES_COUNT)
-        }
+
 
         val probabilityBuffer = TensorBuffer.createFixedSize(intArrayOf(1, OUTPUT_CLASSES_COUNT), DataType.FLOAT32)
 
         // Run inference with the input data.
         interpreter.run(tensorImage.buffer, probabilityBuffer.buffer)
 
-//        val o = output
-        val o = probabilityBuffer.floatArray
-        val p = o.maxOrNull()
-        val i = o.indexOfFirst {
-            if (p != null) {
-                it >= p
-            }
-            else {
-                false
-            }
-        }
-        Log.d("DOGE", p.toString())
-        Log.d("DOGE", i.toString())
-        labelsMap[i]?.let { Log.d("DOGE", it) }
 
-        val indexes = getKLargestIndexes(o, 10)
+        val indexes = getKLargestIndexes(probabilityBuffer.floatArray, 10)
 
-        return indexes.map { labelsMap[it].toString() }
+
+        return indexes.map { kanjiLabels[it].toString() }
 
 
     }
 
 
-    private fun convertBitmapToByteBuffer(bitmap: Bitmap): ByteBuffer {
-        val byteBuffer = ByteBuffer.allocateDirect(modelInputSize).order(ByteOrder.nativeOrder())
-
-        val pixels = IntArray(inputImageWidth * inputImageHeight)
-        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
-
-        for (pixelValue in pixels) {
-            val r = (pixelValue shr 16 and 0xFF)
-            val g = (pixelValue shr 8 and 0xFF)
-            val b = (pixelValue and 0xFF)
-
-            // Convert RGB to grayscale and normalize pixel value to [0..1].
-            val normalizedPixelValue = (r + g + b) / 3.0f
-            byteBuffer.putFloat(normalizedPixelValue)
-        }
-
-        return byteBuffer
-
-    }
 
     fun recognise(lines: SnapshotStateList<Line>): List<String> {
-        val mybitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(mybitmap)
+        val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
         canvas.drawColor(rgb(255,255,255))
         val paint = Paint()
         paint.strokeWidth = 10f
@@ -148,8 +110,6 @@ class CharacterRecognition(canvasSize: IntSize) {
             canvas.drawLine(it.start.x, it.start.y, it.end.x, it.end.y, paint)
         }
 
-
-
-        return runInference(mybitmap)
+        return runInference(Bitmap.createScaledBitmap(bitmap, inputImageWidth, inputImageHeight, true))
     }
 }

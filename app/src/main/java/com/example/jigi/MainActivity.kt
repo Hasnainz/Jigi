@@ -27,14 +27,6 @@ class MainActivity : ComponentActivity() {
 
 
 
-//TODO :: Search page with dictionary
-//TODO :: Settings page for Dictionary
-//TODO :: Handwriting Recognition page
-//TODO :: Search Options
-
-
-
-
 //@Composable
 //fun MyApp(modifier: Modifier = Modifier, kanji: List<String> = listOf("感", "辞", "書")) {
 //    var shouldShowOnboarding by rememberSaveable { mutableStateOf(true) }

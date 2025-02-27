@@ -3,7 +3,6 @@ package com.example.jigi.ui.settingsPage
 import android.content.Context
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import com.example.jigi.data.DictionaryEntry
@@ -28,27 +27,39 @@ class SettingsViewModel(private val dictionaryRepository: DictionaryRepository) 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     suspend fun uploadDictionary(context: Context, contentUri: Uri) {
 
+        try {
+            val fileReader = FileReader(context = context)
+            _uiState.update { currentState ->
+                currentState.copy(isLoadingDictionary = true, isImportError = false, importStatusMessage = "Reading the dictionary file.")
+            }
+            val fileInfo = fileReader.uriToFileInfo(contentUri)
+            _uiState.update { currentState ->
+                currentState.copy(importStatusMessage = "Validating the dictionary file's format.")
+            }
+            val dictionaryImporter = ImportDictionary()
+            _uiState.update { currentState ->
+                currentState.copy(importStatusMessage = "Creating the dictionary importer.")
+            }
+            val dictionary = dictionaryImporter.loadDictionary(fileInfo)
+            _uiState.update { currentState ->
+                currentState.copy(importStatusMessage = "Importing the dictionary into the database.")
+            }
+            insertDictionaryIntoDatabase(dictionary)
+            _uiState.update { currentState ->
+                currentState.copy(importStatusMessage = "Dictionary has been successfully imported.",)
+            }
 
-        val fileReader = FileReader(context = context)
-        _uiState.update { currentState ->
-            currentState.copy(isLoadingDictionary = true, statusMessage = "FileReader Created")
         }
-        val fileInfo = fileReader.uriToFileInfo(contentUri)
-        _uiState.update { currentState ->
-            currentState.copy(statusMessage = "Dictionary file has been read")
+        catch (e: Exception) {
+            _uiState.update { currentState ->
+                currentState.copy(importStatusMessage = "Error in loading the dictionary.",
+                    isLoadingDictionary = false,
+                    isImportError = false)
+            }
+
         }
-        val dictionaryImporter = ImportDictionary()
-        _uiState.update { currentState ->
-            currentState.copy(statusMessage = "Dictionary Importer Created")
-        }
-        val dictionary = dictionaryImporter.loadDictionary(fileInfo)
-        _uiState.update { currentState ->
-            currentState.copy(statusMessage = "Dictionary Loaded")
-        }
-        insertDictionaryIntoDatabase(dictionary)
-        _uiState.update { currentState ->
-            currentState.copy(statusMessage = "Dictionary loaded into memory",)
-        }
+
+
 
 
     }
@@ -76,7 +87,9 @@ class SettingsViewModel(private val dictionaryRepository: DictionaryRepository) 
     }
 
     suspend fun purgeAllDictionaries() {
-        Log.d("Doge", "deleting the entire table")
+        _uiState.update { currentState ->
+            currentState.copy(isDeleted = true, deleteStatusMessage = "Selected dictionaries have been removed.")
+        }
         dictionaryRepository.nukeTable()
     }
 

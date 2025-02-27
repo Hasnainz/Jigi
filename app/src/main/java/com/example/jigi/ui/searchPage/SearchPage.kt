@@ -81,6 +81,8 @@ fun SearchPage(
     searchPageViewModel: SearchPageViewModel = viewModel(),
     navigateToSearch: () -> Unit,
     navigateToSettings: () -> Unit,
+    navigateToAbout: () -> Unit,
+    navigateToHistory: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -100,9 +102,6 @@ fun SearchPage(
             lines = searchPageViewModel.lines,
             addLineSize = { searchPageViewModel.addLineSize() },
             addLine = { searchPageViewModel.addLine(it) },
-//            initStrokeBuilder = { searchPageViewModel.initStrokeBuilder() },
-//            addStrokeToBuilder = { x, y -> searchPageViewModel.addStrokeToBuilder(x, y) },
-//            endStrokeBuilder = { searchPageViewModel.endStrokeBuilder() },
             setHandwritingPadSize = { searchPageViewModel.setHandwritingPadSize(context, it) },
             recognise = { searchPageViewModel.recognise() }
         )
@@ -139,7 +138,9 @@ fun SearchPage(
                 updateDictionaryState = {
                     searchPageViewModel.setSearchOption(it)
                 },
-                onSettingsButtonClicked = navigateToSettings
+                onSettingsButtonClicked = navigateToSettings,
+                navigateToAbout = navigateToAbout,
+                navigateToHistory = navigateToHistory,
             )
         }
 
@@ -152,9 +153,6 @@ fun HandwritingPad(
     lines: List<Line> = emptyList(),
     addLineSize: () -> Unit,
     addLine: (Line) -> Unit,
-//    initStrokeBuilder: () -> Unit,
-//    addStrokeToBuilder: (Float, Float) -> Unit,
-//    endStrokeBuilder: () -> Unit,
     setHandwritingPadSize: (IntSize) -> Unit,
     recognise: () -> Unit,
 ) {
@@ -168,18 +166,14 @@ fun HandwritingPad(
                 detectDragGestures(
                     onDragStart = {
                         addLineSize()
-//                        initStrokeBuilder()
                     },
                     onDragEnd = {
                         addLineSize()
-//                        endStrokeBuilder()
                         recognise()
                                 },
                     onDragCancel = { addLineSize()},
-//                                   endStrokeBuilder() },
                     onDrag = { change, dragAmount ->
                         change.consume()
-//                        addStrokeToBuilder(change.position.x, change.position.y)
                         val line = Line(
                             start = change.position - dragAmount,
                             end = change.position
@@ -203,9 +197,9 @@ fun HandwritingPad(
 }
 
 @Composable
-fun AboutIcon(modifier: Modifier = Modifier) {
+fun AboutIcon(navigateToAbout: () -> kotlin.Unit, modifier: Modifier = Modifier) {
     SmallFloatingActionButton(
-        onClick = { },
+        onClick = { navigateToAbout() },
         containerColor = Color.Transparent,
         contentColor = onBackgroundDark,
         modifier = modifier
@@ -257,6 +251,8 @@ fun ExtraButtonsGrid(
     onCanvasClear: () -> Unit,
     onSettingsButtonClicked: () -> Unit,
     updateDictionaryState: (SearchOption) -> Unit,
+    navigateToAbout: () -> Unit,
+    navigateToHistory: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -274,7 +270,7 @@ fun ExtraButtonsGrid(
         Row(
             modifier = Modifier.padding(bottom = 8.dp)
         ) {
-            SearchHistoryButton(Modifier.padding(end = 8.dp))
+            SearchHistoryButton(navigateToHistory = navigateToHistory, Modifier.padding(end = 8.dp))
             SettingsButton(
                 onSettingsButtonClicked = onSettingsButtonClicked,
                 modifier = Modifier.padding()
@@ -285,7 +281,7 @@ fun ExtraButtonsGrid(
             UndoCanvasButton(Modifier.padding(end = 8.dp), onUndoClicked = onUndoClicked)
             ClearCanvasButton(onCanvasClear = onCanvasClear)
         }
-        AboutIcon()
+        AboutIcon(navigateToAbout = navigateToAbout)
     }
 
 }
@@ -412,9 +408,9 @@ fun ToggleConjugationButton(
 }
 
 @Composable
-fun SearchHistoryButton(modifier: Modifier = Modifier) {
+fun SearchHistoryButton(navigateToHistory: () -> Unit, modifier: Modifier = Modifier) {
     FloatingActionButton(
-        onClick = { },
+        onClick = { navigateToHistory() },
         containerColor = secondaryContainerLight,
         contentColor = onSecondaryContainerLight,
         modifier = modifier

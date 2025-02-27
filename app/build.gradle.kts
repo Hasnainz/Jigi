@@ -71,6 +71,7 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
 
     implementation(libs.tensorflow.lite.metadata)
+//    implementation(libs.tensorflow.lite.support)
     implementation(libs.litert.support.api)
     implementation(libs.litert)
 

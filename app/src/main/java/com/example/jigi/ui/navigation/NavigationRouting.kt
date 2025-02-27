@@ -16,10 +16,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.jigi.viewprovider.AppViewModelProvider
 import com.example.jigi.R
+import com.example.jigi.ui.aboutPage.AboutPage
 import com.example.jigi.ui.dictionaryResultsPage.DictionaryResultsPage
 import com.example.jigi.ui.searchPage.SearchPage
 import com.example.jigi.ui.searchPage.SearchPageViewModel
 import com.example.jigi.ui.dictionaryResultsPage.DictionaryResultsViewModel
+import com.example.jigi.ui.historyPage.HistoryPage
 import com.example.jigi.ui.settingsPage.SettingsPage
 import com.example.jigi.ui.settingsPage.SettingsPageUiState
 import com.example.jigi.ui.settingsPage.SettingsViewModel
@@ -57,7 +59,7 @@ fun JigiApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = SearchScreen.Search.name,
+            startDestination = SearchScreen.Settings.name,
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = SearchScreen.Search.name) {
@@ -68,6 +70,12 @@ fun JigiApp(
                     },
                     navigateToSettings = {
                         navController.navigate(SearchScreen.Settings.name)
+                    },
+                    navigateToAbout = {
+                        navController.navigate(SearchScreen.About.name)
+                    },
+                    navigateToHistory = {
+                        navController.navigate(SearchScreen.History.name)
                     }
                 )
             }
@@ -81,6 +89,14 @@ fun JigiApp(
                 SettingsPage(
                     settingsViewModel = settingsViewModel
                 )
+            }
+
+            composable(route = SearchScreen.About.name) {
+                AboutPage()
+            }
+
+            composable(route = SearchScreen.History.name) {
+                HistoryPage()
             }
         }
     }
