@@ -10,15 +10,17 @@ interface DictionaryRepository {
 
     suspend fun delete(entry: DictionaryEntry)
 
+    suspend fun removeDictionary(dictionary: String)
+
     suspend fun nukeTable()
 
-    fun getExactWord(word: String): Flow<List<DictionaryEntry>>
+    fun getExactWord(word: String, dictionary: String): Flow<List<DictionaryEntry>>
 
-    fun getContainsWord(word: String): Flow<List<DictionaryEntry>>
+    fun getContainsWord(word: String, dictionary: String): Flow<List<DictionaryEntry>>
 
-    fun getForwardsWord(word: String): Flow<List<DictionaryEntry>>
+    fun getForwardsWord(word: String, dictionary: String): Flow<List<DictionaryEntry>>
 
-    fun getBackwardsWord(word: String): Flow<List<DictionaryEntry>>
+    fun getBackwardsWord(word: String, dictionary: String): Flow<List<DictionaryEntry>>
 
     fun getUniqueDictionaries(): Flow<List<String>>
 

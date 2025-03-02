@@ -12,13 +12,15 @@ class OfflineDictionaryRepository(private val dictEntryDAO: DictionaryEntryDAO) 
 
     override suspend fun nukeTable() = dictEntryDAO.nukeTable()
 
-    override fun getExactWord(word: String): Flow<List<DictionaryEntry>> = dictEntryDAO.getExactWord(word)
+    override suspend fun removeDictionary(dictionary: String) = dictEntryDAO.removeDictionary(dictionary)
 
-    override fun getContainsWord(word: String): Flow<List<DictionaryEntry>> = dictEntryDAO.getContainsWord(word)
+    override fun getExactWord(word: String, dictionary: String): Flow<List<DictionaryEntry>> = dictEntryDAO.getExactWord(word, dictionary)
 
-    override fun getForwardsWord(word: String): Flow<List<DictionaryEntry>> = dictEntryDAO.getForwardsWord(word)
+    override fun getContainsWord(word: String, dictionary: String): Flow<List<DictionaryEntry>> = dictEntryDAO.getContainsWord(word, dictionary)
 
-    override fun getBackwardsWord(word: String): Flow<List<DictionaryEntry>> = dictEntryDAO.getBackwardsWord(word)
+    override fun getForwardsWord(word: String, dictionary: String): Flow<List<DictionaryEntry>> = dictEntryDAO.getForwardsWord(word, dictionary)
+
+    override fun getBackwardsWord(word: String, dictionary: String): Flow<List<DictionaryEntry>> = dictEntryDAO.getBackwardsWord(word, dictionary)
 
     override fun getUniqueDictionaries(): Flow<List<String>> = dictEntryDAO.getUniqueDictionaries()
 

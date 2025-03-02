@@ -2,6 +2,8 @@ package com.example.jigi.ui.settingsPage
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
+import android.widget.Space
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
@@ -24,22 +26,29 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.jigi.ui.dictionaryResultsPage.DictionaryEntryCard
 import com.example.jigi.ui.theme.backgroundDark
 import com.example.jigi.ui.theme.onBackgroundDark
 import com.example.jigi.viewprovider.AppViewModelProvider
@@ -78,20 +87,87 @@ fun SettingsPage(
             importDictionaryOnClick = { filePickerLauncher.launch("*/*") },
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = uiState.value.existingDictionaries.toString())
-        Spacer(modifier = Modifier.height(16.dp))
+        ImportedDictionariesScrollable(
+            uiState.value.isSelected,
+            { settingsViewModel.toggleSelectedDictionary(it) },
+            uiState.value.existingDictionaries
+        )
+        Spacer(modifier = Modifier.height(12.dp))
         DeleteAllDictionariesBar(
             isDeleted = uiState.value.isDeleted,
             deletedStatusMessage = uiState.value.deleteStatusMessage,
             deleteAlLDictionaries = {
                 coroutineScope.launch {
-                    settingsViewModel.purgeAllDictionaries()
+                    settingsViewModel.removeSelectedDictionaries()
                 }
             },
         )
 
     }
 
+}
+
+@Composable
+fun ImportedDictionariesScrollable(
+    checked: Map<String, Boolean>,
+    toggleSelected: (String) -> Unit,
+    dictionaries: List<String>,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn {
+        items(dictionaries) { dictionary ->
+            checked[dictionary]?.let {
+                AvailableDictionaryBar(checked = it, onCheckedChange = {
+                    toggleSelected(dictionary)
+                }, dictionary = dictionary)
+            }
+            Spacer(Modifier.height(4.dp))
+        }
+    }
+
+}
+
+@Composable
+fun AvailableDictionaryBar(
+    checked: Boolean,
+    onCheckedChange: () -> Unit,
+    dictionary: String,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
+            .fillMaxWidth()
+            .background(color = primaryContainerLight),
+    ) {
+        Text(
+            text = dictionary,
+            color = onPrimaryContainerLight,
+            modifier = Modifier.padding(start = 16.dp)
+        )
+        Checkbox(
+            colors = CheckboxColors(
+                checkedBoxColor = primaryContainerLight,
+                checkedCheckmarkColor = onPrimaryContainerLight,
+                uncheckedCheckmarkColor = onPrimaryContainerLight,
+                uncheckedBoxColor = primaryContainerLight,
+                disabledCheckedBoxColor = backgroundDark,
+                disabledUncheckedBoxColor = onBackgroundDark,
+                disabledIndeterminateBoxColor = onBackgroundDark,
+                checkedBorderColor = backgroundDark,
+                uncheckedBorderColor = backgroundDark,
+                disabledBorderColor = backgroundDark,
+                disabledUncheckedBorderColor = backgroundDark,
+                disabledIndeterminateBorderColor = backgroundDark
+            ),
+            checked = checked,
+            onCheckedChange = { onCheckedChange() }
+        )
+
+
+    }
 }
 
 

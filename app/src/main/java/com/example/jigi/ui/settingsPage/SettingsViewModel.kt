@@ -3,7 +3,9 @@ package com.example.jigi.ui.settingsPage
 import android.content.Context
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jigi.data.DictionaryEntry
@@ -77,13 +79,31 @@ class SettingsViewModel(private val dictionaryRepository: DictionaryRepository) 
 
     }
 
+    fun toggleSelectedDictionary(dictionary: String) {
+        val tmpMap = _uiState.value.isSelected.toMutableMap()
+        if (dictionary in tmpMap) {
+            tmpMap[dictionary] = !tmpMap[dictionary]!!
+        }
+        _uiState.update { currentState ->
+            currentState.copy(
+                isSelected = tmpMap
+            )
+        }
+    }
+
     fun updateExistingDictionaries() {
         viewModelScope.launch {
+            val currentDictionaries = dictionaryRepository.getUniqueDictionaries().filterNotNull().first()
+            val tmpMap = _uiState.value.isSelected.toMutableMap()
+            currentDictionaries.forEach{
+                if (!tmpMap.containsKey(it)) {
+                    tmpMap[it] = true
+                }
+            }
             _uiState.update { currentState ->
                 currentState.copy(
-                    existingDictionaries = dictionaryRepository.getUniqueDictionaries()
-                        .filterNotNull()
-                        .first()
+                    existingDictionaries = currentDictionaries,
+                    isSelected = tmpMap
                 )
             }
         }
@@ -110,6 +130,20 @@ class SettingsViewModel(private val dictionaryRepository: DictionaryRepository) 
             }
 
         }
+    }
+
+    suspend fun removeSelectedDictionaries() {
+        val selectedDictionaries = _uiState.value.isSelected.filter { (key, value) -> value }
+        selectedDictionaries.keys.forEach { dict ->
+            dictionaryRepository.removeDictionary(dict)
+        }
+        _uiState.update { currentState ->
+            currentState.copy(
+                isDeleted = true,
+                deleteStatusMessage = "Selected dictionaries have been removed."
+            )
+        }
+        updateExistingDictionaries()
     }
 
     suspend fun purgeAllDictionaries() {

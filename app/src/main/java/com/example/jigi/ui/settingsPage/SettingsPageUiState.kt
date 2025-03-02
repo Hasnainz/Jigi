@@ -9,4 +9,5 @@ data class SettingsPageUiState(
     val isLoadingDictionary: Boolean = false,
     val isImportError: Boolean = false,
     val existingDictionaries: List<String> = listOf(),
+    val isSelected: Map<String, Boolean> = mapOf(),
 )

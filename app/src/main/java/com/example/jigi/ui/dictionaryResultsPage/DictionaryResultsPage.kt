@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.example.jigi.viewprovider.AppViewModelProvider
 import com.example.jigi.ui.searchPage.SearchPageViewModel
+import com.example.jigi.ui.settingsPage.SettingsViewModel
 import com.example.jigi.ui.theme.onPrimaryContainerLight
 import com.example.jigi.ui.theme.primaryContainerLight
 import kotlinx.coroutines.launch
@@ -51,17 +52,20 @@ import kotlinx.coroutines.launch
 @Composable
 fun DictionaryResultsPage(
     searchPageViewModel: SearchPageViewModel = viewModel(),
+    settingsViewModel: SettingsViewModel = viewModel(),
     dictionaryResultsViewModel: DictionaryResultsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ) {
     val searchPageState = searchPageViewModel.uiState.collectAsState()
+    val settingsState = settingsViewModel.uiState.collectAsState()
 
 
     val coroutineScope = rememberCoroutineScope()
     coroutineScope.launch {
         dictionaryResultsViewModel.search(
             searchPageState.value.query,
-            searchPageState.value.selectedSearchOption
+            searchPageState.value.selectedSearchOption,
+            settingsState.value.isSelected,
         )
     }
 

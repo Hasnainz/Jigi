@@ -59,7 +59,7 @@ fun JigiApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = SearchScreen.Settings.name,
+            startDestination = SearchScreen.Search.name,
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = SearchScreen.Search.name) {
@@ -82,6 +82,7 @@ fun JigiApp(
             composable(route = SearchScreen.DictionaryResults.name) {
                 DictionaryResultsPage(
                     searchPageViewModel = searchPageViewModel,
+                    settingsViewModel = settingsViewModel,
                     dictionaryResultsViewModel = dictionaryResultsViewModel
                 )
             }

@@ -19,20 +19,23 @@ interface DictionaryEntryDAO {
     @Delete
     suspend fun delete(entry: DictionaryEntry)
 
+    @Query("DELETE FROM Dictionary WHERE dictionary = :dictionary")
+    suspend fun removeDictionary(dictionary: String)
+
     @Query("DELETE FROM Dictionary")
     suspend fun nukeTable()
 
-    @Query("SELECT * FROM Dictionary WHERE word = :word")
-    fun getExactWord(word: String): Flow<List<DictionaryEntry>>
+    @Query("SELECT * FROM Dictionary WHERE word = :word AND dictionary = :dictionary")
+    fun getExactWord(word: String, dictionary: String): Flow<List<DictionaryEntry>>
 
-    @Query("SELECT * FROM Dictionary WHERE word LIKE '%' || :word || '%'")
-    fun getContainsWord(word: String): Flow<List<DictionaryEntry>>
+    @Query("SELECT * FROM Dictionary WHERE word LIKE '%' || :word || '%' AND dictionary = :dictionary")
+    fun getContainsWord(word: String, dictionary: String): Flow<List<DictionaryEntry>>
 
-    @Query("SELECT * FROM Dictionary WHERE word LIKE :word || '%'")
-    fun getForwardsWord(word: String): Flow<List<DictionaryEntry>>
+    @Query("SELECT * FROM Dictionary WHERE word LIKE :word || '%' AND dictionary = :dictionary")
+    fun getForwardsWord(word: String, dictionary: String): Flow<List<DictionaryEntry>>
 
-    @Query("SELECT * FROM Dictionary WHERE word LIKE '%' || :word")
-    fun getBackwardsWord(word: String): Flow<List<DictionaryEntry>>
+    @Query("SELECT * FROM Dictionary WHERE word LIKE '%' || :word AND dictionary = :dictionary")
+    fun getBackwardsWord(word: String, dictionary: String): Flow<List<DictionaryEntry>>
 
     @Query("SELECT DISTINCT dictionary FROM Dictionary")
     fun getUniqueDictionaries(): Flow<List<String>>
