@@ -1,0 +1,33 @@
+Model: "sequential"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃ Layer (type)                    ┃ Output Shape           ┃       Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ efficientnetv2-b0 (Functional)  │ (None, 6512)           │    14,260,608 │
+└─────────────────────────────────┴────────────────────────┴───────────────┘
+ Total params: 14,260,608 (54.40 MB)
+ Trainable params: 14,200,000 (54.17 MB)
+ Non-trainable params: 60,608 (236.75 KB)
+None
+Epoch 1/10
+446/446 - 142s - 317ms/step - accuracy: 0.0158 - loss: 6.8933
+Epoch 2/10
+446/446 - 41s - 93ms/step - accuracy: 0.4053 - loss: 2.6178
+Epoch 3/10
+446/446 - 42s - 94ms/step - accuracy: 0.8031 - loss: 0.7526
+Epoch 4/10
+446/446 - 42s - 93ms/step - accuracy: 0.8887 - loss: 0.4126
+Epoch 5/10
+446/446 - 42s - 93ms/step - accuracy: 0.9215 - loss: 0.2827
+Epoch 6/10
+446/446 - 42s - 94ms/step - accuracy: 0.9397 - loss: 0.2116
+Epoch 7/10
+446/446 - 42s - 94ms/step - accuracy: 0.9498 - loss: 0.1714
+Epoch 8/10
+446/446 - 42s - 94ms/step - accuracy: 0.9570 - loss: 0.1431
+Epoch 9/10
+446/446 - 42s - 94ms/step - accuracy: 0.9632 - loss: 0.1204
+Epoch 10/10
+446/446 - 42s - 93ms/step - accuracy: 0.9691 - loss: 0.1002
+446/446 - 17s - 39ms/step - accuracy: 0.9757 - loss: 0.0761
+loss: 0.07606492191553116
+acc: 0.9756866693496704

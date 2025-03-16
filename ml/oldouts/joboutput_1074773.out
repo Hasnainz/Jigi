@@ -1,0 +1,19 @@
+Model: "sequential"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃ Layer (type)                    ┃ Output Shape           ┃       Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ convnext_tiny (Functional)      │ (None, 6512)           │    32,824,784 │
+└─────────────────────────────────┴────────────────────────┴───────────────┘
+ Total params: 32,824,784 (125.22 MB)
+ Trainable params: 32,824,784 (125.22 MB)
+ Non-trainable params: 0 (0.00 B)
+None
+Epoch 1/100
+318/318 - 631s - 2s/step - accuracy: 1.4128e-04 - loss: 8.8679
+Epoch 2/100
+318/318 - 574s - 2s/step - accuracy: 1.8735e-04 - loss: 8.7824
+Epoch 3/100
+318/318 - 574s - 2s/step - accuracy: 2.3342e-04 - loss: 8.7659
+Epoch 4/100
+318/318 - 575s - 2s/step - accuracy: 2.1806e-04 - loss: 8.7752
+Epoch 5/100

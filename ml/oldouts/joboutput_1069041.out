@@ -1,0 +1,195 @@
+Model: "sequential"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃ Layer (type)                    ┃ Output Shape           ┃       Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ conv2d (Conv2D)                 │ (None, 62, 62, 3)      │            30 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ max_pooling2d (MaxPooling2D)    │ (None, 31, 31, 3)      │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_1 (Conv2D)               │ (None, 29, 29, 3)      │            84 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ max_pooling2d_1 (MaxPooling2D)  │ (None, 14, 14, 3)      │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dropout (Dropout)               │ (None, 14, 14, 3)      │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_2 (Conv2D)               │ (None, 12, 12, 3)      │            84 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ max_pooling2d_2 (MaxPooling2D)  │ (None, 6, 6, 3)        │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dropout_1 (Dropout)             │ (None, 6, 6, 3)        │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ flatten (Flatten)               │ (None, 108)            │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense (Dense)                   │ (None, 1024)           │       111,616 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dropout_2 (Dropout)             │ (None, 1024)           │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_1 (Dense)                 │ (None, 1024)           │     1,049,600 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dropout_3 (Dropout)             │ (None, 1024)           │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_2 (Dense)                 │ (None, 1024)           │     1,049,600 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dropout_4 (Dropout)             │ (None, 1024)           │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_3 (Dense)                 │ (None, 6583)           │     6,747,575 │
+└─────────────────────────────────┴────────────────────────┴───────────────┘
+ Total params: 8,958,589 (34.17 MB)
+ Trainable params: 8,958,589 (34.17 MB)
+ Non-trainable params: 0 (0.00 B)
+None
+Epoch 1/100
+5143/5143 - 27s - 5ms/step - accuracy: 0.0027 - loss: 8.0836
+Epoch 2/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.0291 - loss: 6.4000
+Epoch 3/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.0920 - loss: 5.1006
+Epoch 4/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.1570 - loss: 4.3271
+Epoch 5/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.2121 - loss: 3.8477
+Epoch 6/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.2593 - loss: 3.5109
+Epoch 7/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.2974 - loss: 3.2519
+Epoch 8/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.3280 - loss: 3.0589
+Epoch 9/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.3535 - loss: 2.9077
+Epoch 10/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.3747 - loss: 2.7928
+Epoch 11/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.3923 - loss: 2.6968
+Epoch 12/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.4080 - loss: 2.6098
+Epoch 13/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.4199 - loss: 2.5402
+Epoch 14/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.4334 - loss: 2.4687
+Epoch 15/100
+5143/5143 - 16s - 3ms/step - accuracy: 0.4423 - loss: 2.4239
+Epoch 16/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.4523 - loss: 2.3699
+Epoch 17/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.4586 - loss: 2.3381
+Epoch 18/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.4659 - loss: 2.3077
+Epoch 19/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.4730 - loss: 2.2660
+Epoch 20/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.4788 - loss: 2.2370
+Epoch 21/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.4808 - loss: 2.2322
+Epoch 22/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.4901 - loss: 2.1828
+Epoch 23/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.4930 - loss: 2.1740
+Epoch 24/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.4986 - loss: 2.1427
+Epoch 25/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5029 - loss: 2.1202
+Epoch 26/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5062 - loss: 2.1045
+Epoch 27/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5104 - loss: 2.0823
+Epoch 28/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5121 - loss: 2.0776
+Epoch 29/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5157 - loss: 2.0636
+Epoch 30/100
+5143/5143 - 16s - 3ms/step - accuracy: 0.5189 - loss: 2.0465
+Epoch 31/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5202 - loss: 2.0362
+Epoch 32/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5229 - loss: 2.0213
+Epoch 33/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5267 - loss: 2.0073
+Epoch 34/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5273 - loss: 2.0056
+Epoch 35/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5292 - loss: 1.9951
+Epoch 36/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5312 - loss: 1.9846
+Epoch 37/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5329 - loss: 1.9777
+Epoch 38/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5356 - loss: 1.9612
+Epoch 39/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5373 - loss: 1.9538
+Epoch 40/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5381 - loss: 1.9550
+Epoch 41/100
+5143/5143 - 16s - 3ms/step - accuracy: 0.5392 - loss: 1.9560
+Epoch 42/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5388 - loss: 1.9492
+Epoch 43/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5416 - loss: 1.9381
+Epoch 44/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5439 - loss: 1.9261
+Epoch 45/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5452 - loss: 1.9219
+Epoch 46/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5446 - loss: 1.9224
+Epoch 47/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5459 - loss: 1.9176
+Epoch 48/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5490 - loss: 1.9062
+Epoch 49/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5493 - loss: 1.9058
+Epoch 50/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5518 - loss: 1.8870
+Epoch 51/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5529 - loss: 1.8800
+Epoch 52/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5528 - loss: 1.8856
+Epoch 53/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5551 - loss: 1.8788
+Epoch 54/100
+5143/5143 - 16s - 3ms/step - accuracy: 0.5548 - loss: 1.8765
+Epoch 55/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5580 - loss: 1.8582
+Epoch 56/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5577 - loss: 1.8564
+Epoch 57/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5584 - loss: 1.8613
+Epoch 58/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5596 - loss: 1.8521
+Epoch 59/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5600 - loss: 1.8524
+Epoch 60/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5622 - loss: 1.8400
+Epoch 61/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5629 - loss: 1.8373
+Epoch 62/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5649 - loss: 1.8285
+Epoch 63/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5638 - loss: 1.8376
+Epoch 64/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5655 - loss: 1.8266
+Epoch 65/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5677 - loss: 1.8159
+Epoch 66/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5674 - loss: 1.8170
+Epoch 67/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5675 - loss: 1.8229
+Epoch 68/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5687 - loss: 1.8113
+Epoch 69/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5691 - loss: 1.8115
+Epoch 70/100
+5143/5143 - 16s - 3ms/step - accuracy: 0.5711 - loss: 1.8021
+Epoch 71/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5705 - loss: 1.8033
+Epoch 72/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5725 - loss: 1.7982
+Epoch 73/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5722 - loss: 1.7971
+Epoch 74/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5710 - loss: 1.8049
+Epoch 75/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5738 - loss: 1.7944
+Epoch 76/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5740 - loss: 1.7945
+Epoch 77/100
+5143/5143 - 17s - 3ms/step - accuracy: 0.5738 - loss: 1.7933
+Epoch 78/100

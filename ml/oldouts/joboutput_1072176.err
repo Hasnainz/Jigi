@@ -1,0 +1,28 @@
+2025-02-19 16:12:34.891415: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1739981554.903121  218469 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1739981554.906780  218469 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-02-19 16:12:35.048067: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+I0000 00:00:1739981558.901804  218469 gpu_device.cc:2022] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 20732 MB memory:  -> device: 0, name: NVIDIA A10, pci bus id: 0000:81:00.0, compute capability: 8.6
+Traceback (most recent call last):
+  File "/dcs/21/u2104990/Documents/324/runondcs/run.py", line 117, in <module>
+    model = M1(6512)
+            ^^^^^^^^
+  File "/dcs/21/u2104990/Documents/324/runondcs/run.py", line 48, in M1
+    return tf.keras.Sequential([
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/dcs/21/u2104990/.local/lib/python3.12/site-packages/keras/src/models/sequential.py", line 76, in __init__
+    self._maybe_rebuild()
+  File "/dcs/21/u2104990/.local/lib/python3.12/site-packages/keras/src/models/sequential.py", line 141, in _maybe_rebuild
+    self.build(input_shape)
+  File "/dcs/21/u2104990/.local/lib/python3.12/site-packages/keras/src/layers/layer.py", line 228, in build_wrapper
+    original_build_method(*args, **kwargs)
+  File "/dcs/21/u2104990/.local/lib/python3.12/site-packages/keras/src/models/sequential.py", line 187, in build
+    x = layer(x)
+        ^^^^^^^^
+  File "/dcs/21/u2104990/.local/lib/python3.12/site-packages/keras/src/utils/traceback_utils.py", line 122, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "/dcs/21/u2104990/.local/lib/python3.12/site-packages/keras/src/layers/input_spec.py", line 245, in assert_input_compatibility
+    raise ValueError(
+ValueError: Input 0 of layer "efficientnetb0" is incompatible with the layer: expected shape=(None, 224, 224, 3), found shape=(None, 64, 64)

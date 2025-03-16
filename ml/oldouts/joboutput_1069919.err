@@ -1,0 +1,62 @@
+2025-02-18 11:52:06.938716: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-02-18 11:52:06.947236: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1739879526.956552   75122 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1739879526.959421   75122 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-02-18 11:52:06.978602: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+I0000 00:00:1739879530.190180   75122 gpu_device.cc:2022] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 22494 MB memory:  -> device: 0, name: NVIDIA RTX A5000, pci bus id: 0000:01:00.0, compute capability: 8.6
+2025-02-18 11:52:11.743285: E tensorflow/core/util/util.cc:131] oneDNN supports DT_HALF only on platforms with AVX-512. Falling back to the default Eigen-based implementation if present.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1739879531.758738   75168 service.cc:148] XLA service 0x7f4f5c011df0 initialized for platform CUDA (this does not guarantee that XLA will be used). Devices:
+I0000 00:00:1739879531.758758   75168 service.cc:156]   StreamExecutor device (0): NVIDIA RTX A5000, Compute Capability 8.6
+2025-02-18 11:52:11.787110: I tensorflow/compiler/mlir/tensorflow/utils/dump_mlir_util.cc:268] disabling MLIR crash reproducer, set env var `MLIR_CRASH_REPRODUCER_DIRECTORY` to enable.
+I0000 00:00:1739879531.939915   75168 cuda_dnn.cc:529] Loaded cuDNN version 90501
+2025-02-18 11:52:12.741781: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_2800_0', 292 bytes spill stores, 296 bytes spill loads
+
+2025-02-18 11:52:12.902127: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_2800', 72 bytes spill stores, 72 bytes spill loads
+
+2025-02-18 11:52:13.108083: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_2800_0', 308 bytes spill stores, 308 bytes spill loads
+
+2025-02-18 11:52:13.138642: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_2800', 276 bytes spill stores, 276 bytes spill loads
+
+2025-02-18 11:52:13.344316: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_2800', 204 bytes spill stores, 204 bytes spill loads
+
+2025-02-18 11:52:13.552684: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_2800', 300 bytes spill stores, 300 bytes spill loads
+
+2025-02-18 11:52:13.724324: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_3095', 56 bytes spill stores, 56 bytes spill loads
+
+2025-02-18 11:52:13.754386: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_2800', 876 bytes spill stores, 880 bytes spill loads
+
+2025-02-18 11:52:13.794309: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_2800', 16 bytes spill stores, 16 bytes spill loads
+
+2025-02-18 11:52:14.044955: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_2800', 1196 bytes spill stores, 1200 bytes spill loads
+
+2025-02-18 11:52:14.257716: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_3095', 660 bytes spill stores, 608 bytes spill loads
+
+I0000 00:00:1739879536.316849   75168 device_compiler.h:188] Compiled cluster using XLA!  This line is logged at most once for the lifetime of the process.
+2025-02-18 11:52:42.212981: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_2800', 452 bytes spill stores, 304 bytes spill loads
+
+2025-02-18 11:52:42.308986: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_2800', 1220 bytes spill stores, 888 bytes spill loads
+
+2025-02-18 11:52:42.408455: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_2800', 1740 bytes spill stores, 1208 bytes spill loads
+
+2025-02-18 11:52:42.409267: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_2800', 20 bytes spill stores, 20 bytes spill loads
+
+2025-02-18 11:52:42.446077: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_2800', 100 bytes spill stores, 100 bytes spill loads
+
+2025-02-18 11:52:42.672060: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_2800_0', 400 bytes spill stores, 372 bytes spill loads
+
+2025-02-18 11:52:42.705859: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_3095', 112 bytes spill stores, 112 bytes spill loads
+
+2025-02-18 11:52:42.838514: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_2800', 304 bytes spill stores, 304 bytes spill loads
+
+2025-02-18 11:52:43.249384: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_3095', 44 bytes spill stores, 44 bytes spill loads
+
+2025-02-18 11:52:43.370608: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_3095', 360 bytes spill stores, 376 bytes spill loads
+
+2025-02-18 11:52:43.757526: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_2800', 228 bytes spill stores, 220 bytes spill loads
+
+2025-02-18 11:52:43.839026: I external/local_xla/xla/stream_executor/cuda/cuda_asm_compiler.cc:397] ptxas warning : Registers are spilled to local memory in function 'gemm_fusion_dot_2800_0', 572 bytes spill stores, 416 bytes spill loads
+
+slurmstepd: error: *** JOB 1069919 ON falcon-04 CANCELLED AT 2025-02-18T11:54:20 ***

@@ -1,0 +1,73 @@
+Model: "sequential"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃ Layer (type)                    ┃ Output Shape           ┃       Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ efficientnetb0 (Functional)     │ (None, 6512)           │    12,390,863 │
+└─────────────────────────────────┴────────────────────────┴───────────────┘
+ Total params: 12,390,863 (47.27 MB)
+ Trainable params: 12,348,844 (47.11 MB)
+ Non-trainable params: 42,019 (164.14 KB)
+None
+Epoch 1/30
+318/318 - 132s - 414ms/step - accuracy: 0.0010 - loss: 8.1417
+Epoch 2/30
+318/318 - 46s - 143ms/step - accuracy: 0.0171 - loss: 6.3091
+Epoch 3/30
+318/318 - 46s - 143ms/step - accuracy: 0.1951 - loss: 3.7424
+Epoch 4/30
+318/318 - 46s - 144ms/step - accuracy: 0.5379 - loss: 1.8174
+Epoch 5/30
+318/318 - 46s - 144ms/step - accuracy: 0.7372 - loss: 0.9739
+Epoch 6/30
+318/318 - 46s - 144ms/step - accuracy: 0.8254 - loss: 0.6260
+Epoch 7/30
+318/318 - 46s - 143ms/step - accuracy: 0.8716 - loss: 0.4522
+Epoch 8/30
+318/318 - 46s - 144ms/step - accuracy: 0.8909 - loss: 0.3772
+Epoch 9/30
+318/318 - 46s - 144ms/step - accuracy: 0.9133 - loss: 0.2918
+Epoch 10/30
+318/318 - 46s - 144ms/step - accuracy: 0.9325 - loss: 0.2252
+Epoch 11/30
+318/318 - 46s - 144ms/step - accuracy: 0.9399 - loss: 0.1954
+Epoch 12/30
+318/318 - 46s - 144ms/step - accuracy: 0.9496 - loss: 0.1630
+Epoch 13/30
+318/318 - 46s - 144ms/step - accuracy: 0.9531 - loss: 0.1494
+Epoch 14/30
+318/318 - 46s - 144ms/step - accuracy: 0.9553 - loss: 0.1419
+Epoch 15/30
+318/318 - 46s - 144ms/step - accuracy: 0.9574 - loss: 0.1343
+Epoch 16/30
+318/318 - 46s - 144ms/step - accuracy: 0.9552 - loss: 0.1432
+Epoch 17/30
+318/318 - 46s - 144ms/step - accuracy: 0.9628 - loss: 0.1177
+Epoch 18/30
+318/318 - 46s - 144ms/step - accuracy: 0.9640 - loss: 0.1153
+Epoch 19/30
+318/318 - 46s - 144ms/step - accuracy: 0.9733 - loss: 0.0845
+Epoch 20/30
+318/318 - 46s - 145ms/step - accuracy: 0.9791 - loss: 0.0670
+Epoch 21/30
+318/318 - 46s - 145ms/step - accuracy: 0.9798 - loss: 0.0649
+Epoch 22/30
+318/318 - 46s - 144ms/step - accuracy: 0.9811 - loss: 0.0613
+Epoch 23/30
+318/318 - 46s - 144ms/step - accuracy: 0.9808 - loss: 0.0611
+Epoch 24/30
+318/318 - 46s - 145ms/step - accuracy: 0.9798 - loss: 0.0638
+Epoch 25/30
+318/318 - 46s - 145ms/step - accuracy: 0.9828 - loss: 0.0543
+Epoch 26/30
+318/318 - 46s - 145ms/step - accuracy: 0.9834 - loss: 0.0516
+Epoch 27/30
+318/318 - 46s - 144ms/step - accuracy: 0.9849 - loss: 0.0475
+Epoch 28/30
+318/318 - 46s - 144ms/step - accuracy: 0.9841 - loss: 0.0497
+Epoch 29/30
+318/318 - 46s - 145ms/step - accuracy: 0.9841 - loss: 0.0497
+Epoch 30/30
+318/318 - 46s - 144ms/step - accuracy: 0.9824 - loss: 0.0541
+318/318 - 19s - 60ms/step - accuracy: 0.9745 - loss: 0.0806
+loss: 0.0806470736861229
+acc: 0.9745055437088013
