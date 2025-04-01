@@ -39,7 +39,7 @@ class CharacterRecognition(canvasSize: IntSize) {
 
     fun createInterpreter(context: Context) {
         val tfLiteOptions = Interpreter.Options()
-        interpreter = Interpreter(FileUtil.loadMappedFile(context, "model.tflite"), tfLiteOptions)
+        interpreter = Interpreter(FileUtil.loadMappedFile(context, "modelv2.tflite"), tfLiteOptions)
 
 
         val inputShape = interpreter.getInputTensor(0).shape()
