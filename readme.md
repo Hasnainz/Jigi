@@ -1,7 +1,7 @@
 # A native Android Japanese dictionary app built using Kotlin and Jetpack Compose. It also contains a TFLite handwriting recognition model built using Python 3 and TensorFlow.
 
 
-## The ml folder contains the code for generating and training the dataset, the descriptions of each file can be seen as follows.
+## The ml folder contains the code for generating and training the dataset, the descriptions of each file can be seen as follows. This project can be run by importing the entire directory into android studio.
 ---
 `batch.sbatch`
 
